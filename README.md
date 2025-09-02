@@ -1,65 +1,106 @@
-# ZenLudo 🎲
+# 🎲 ZenLudo
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-[![Repo Size](https://img.shields.io/github/repo-size/your-username/ZenLudo)]()
-[![Stars](https://img.shields.io/github/stars/your-username/ZenLudo)]()
-[![Issues](https://img.shields.io/github/issues/your-username/ZenLudo)]()
-[![React](https://img.shields.io/badge/React-17.0.2-blue?logo=react)]()
-[![Node.js](https://img.shields.io/badge/Node.js-18-green?logo=node.js)]()
-[![MongoDB](https://img.shields.io/badge/MongoDB-6.0-green?logo=mongodb)]()
-[![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.3.3-blue?logo=tailwind-css)]()
-[![Socket.io](https://img.shields.io/badge/Socket.io-4.6.1-black?logo=socket.io)]()
-
-ZenLudo is a **multiplayer game app** inspired by classic Ludo, designed for casual play and competitive gaming. Play with friends, challenge AI bots, or join online rooms with real-time interaction. ZenLudo combines fun gameplay with social features, making it perfect for all ages.
+ZenLudo is a **feature-rich multiplayer Ludo game** designed for both casual and competitive players. With a focus on **social connectivity, fair gameplay, and customization**, ZenLudo delivers a seamless experience across devices.  
 
 ---
 
-## 🚀 Features Overview
+## 🚀 Key Features
 
-### 1. User Account & Profile
-- Register using Google or Gmail with OTP verification.  
-- Secure login using Google or email/password.  
-- Change display name once per month.  
-- Add a personalized profile picture.  
-- Recover password easily for email-based accounts.  
-
-### 2. Friends & Social
-- Add friends using unique game ID.  
-- Remove friends anytime.  
-- View friends’ online/offline status.  
-- Receive notifications for friend requests.  
-
-### 3. Game Modes
-- Play with friends on the same device.  
-- Challenge bots with multiple AI difficulty levels.  
-- Create rooms and invite friends.  
-- Share room ID for easy joining.  
-- Join games using room ID and password.  
-- Send game invitations via shareable links.  
-- Customize game settings: dice rules, board themes, bot difficulty.  
-- Spectator mode to watch games.  
-- Optional timer per move for faster gameplay.  
-
-### 4. Gameplay & History
-- Store the last three game results.  
-- Track 1st position counts in different modes.  
-- View detailed game statistics: win/loss ratio, dice stats, longest streak.  
-- Server-side move validation to prevent cheating.  
-- Rooms auto-close after inactivity.  
-
-### 5. Chat & Communication
-- Send messages to online friends only.  
-- Chat inside rooms with emojis.  
-- Connect to voice chat inside rooms.  
-- Mute users individually.  
-- Push-to-talk or mute all options.  
-- Temporary text chat history inside rooms.  
-
-### 6. Visual & Fun Enhancements
-- Animated dice for immersive gameplay.  
-- Multiple board themes and skins for personalization.  
+### 🔑 1. User Account & Profile
+- **Quick Google Sign-Up:** Instantly create an account using your Google profile. Your name, email, and profile picture sync automatically.  
+- **Email Registration with OTP:** Secure sign-up with email verification powered by Nodemailer.  
+- **Multiple Login Options:** Choose between Google or email/password login.  
+- **Profile Customization:** Upload custom profile pictures and update your display name once per month.  
+- **Easy Account Recovery:** Reset passwords quickly for email-based accounts.  
 
 ---
 
-<!-- ## 📂 Project Structure -->
+### 👥 2. Friends & Social
+- **Unique Friend IDs:** Each player gets a unique ID for easy friend search, even with duplicate usernames.  
+- **Friend Requests & Notifications:** Requests appear as pop-ups when users log in.  
+- **Friend Limit:** Add up to **100 friends**.  
+- **Safe Friend Removal:** Confirmation required before removing friends.  
+- **Real-Time Status:** Track friends’ online/offline status and last seen times.  
+- **Invite Controls:** Invite friends every 30 seconds or freeze invites for 10 minutes.  
 
+---
+
+### 🎮 3. Game Modes
+- **Login Required:** All players must log in to play.  
+- **Local Multiplayer:** Play with **2–6 players** on one device.  
+- **Bot Matches:** Three difficulty levels:
+  - *Easy:* Occasionally skips cutting tokens.  
+  - *Medium:* Balanced AI.  
+  - *Hard:* Near-perfect strategic play.  
+- **Room Creation & Management:**  
+  - Create up to **3 rooms per day** with unique ID, password, and group name.  
+  - Shareable invite links (password required).  
+  - Invite friends directly without password entry.  
+  - Admin controls: Kick players (5-min cooldown), assign colors, and apply themes.  
+- **Spectator Mode:** Watch games after being eliminated.  
+- **Timer Option:** Enable per-move timers for faster gameplay.  
+
+---
+
+### ⚔️ 4. Gameplay & History
+- **Cheating Prevention:** All moves validated server-side for fairness.  
+- **AFK Handling:**  
+  - After 30s of inactivity, dice auto-rolls.  
+  - After 3 auto-rolls, player is marked *dead*; tokens remain still.  
+- **Game History:** View the last **3 game results**.  
+- **Performance Stats:**  
+  - Track total first-place wins by mode.  
+  - Detailed analytics: Win/loss ratio, dice roll trends, and streaks.  
+- **Auto Room Close:** Inactive rooms close automatically.  
+
+---
+
+### 💬 5. Chat & Communication
+- **Friend Chat:** Message online friends outside of matches.  
+- **In-Room Chat:** Chat, send emojis, and voice chat during gameplay.  
+- **Voice Options:**  
+  - Push-to-talk or open mic.  
+  - Mute specific players or all except yourself.  
+- **Moderation:** Offensive language triggers a **30-min chat/voice ban**.  
+- **Temporary Logs:** Room chats are session-based only.  
+
+---
+
+### 🎨 6. Visual & Fun Enhancements
+- **Animated Dice:** Immersive dice-rolling animations.  
+- **Custom Skins:** Unlockable board themes and dice designs visible to all.  
+- **Room Personalization:** Room creators can showcase their themes and dice.  
+
+---
+
+## 🛠️ Tech Stack
+- **Frontend:** React, TailwindCSS  
+- **Backend:** Node.js, Express.js  
+- **Database:** MongoDB with Mongoose  
+- **Real-time Communication:** Socket.io  
+- **Authentication & Security:** JWT, Google OAuth, Nodemailer (OTP)  
+- **Deployment:** Docker-ready  
+
+---
+
+## 📦 Project Setup
+```bash
+# Clone the repository
+git clone https://github.com/your-username/ZenLudo.git
+
+# Navigate to project directory
+cd ZenLudo
+
+# Install dependencies (backend)
+cd server
+npm install
+
+# Install dependencies (frontend)
+cd ../client
+npm install
+
+# Create .env files for client and server
+touch .env
+
+# Run development servers
+npm run dev
