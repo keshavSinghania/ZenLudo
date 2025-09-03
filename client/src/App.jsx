@@ -1,8 +1,14 @@
 import React from 'react'
+import SignIn from '../pages/AuthPages/SignIn'
+import OtpVerification from '../pages/AuthPages/OtpVerification.jsx'
 
 const App = () => {
+  
   return (
-    <div className='bg-red-300'>ZenLudo</div>
+    <>
+    <SignIn/>
+    <OtpVerification/>
+    </>
   )
 }
 
