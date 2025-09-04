@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-
 import { FcGoogle } from 'react-icons/fc';
 import { BsFingerprint } from 'react-icons/bs';
 import { IoEye, IoEyeOff } from "react-icons/io5";
+import {useNavigate } from 'react-router-dom';
 
 //image import
 import dice2 from '../../src/assets/dicePng2.png';
@@ -12,11 +12,13 @@ import Pawn5 from '../../src/assets/ludoToken5.png';
 import Pawn6 from '../../src/assets/ludoToken6.png';
 import axiosInstance from '../../api/axios';
 
+
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [resMessage, setResMessage] = useState("");
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [isLoginMode, setIsLoginMode] = useState(true);
+  const navigate = useNavigate();
 
   //  data change handler
   const dataChangeHandler = (e) => {
@@ -45,7 +47,7 @@ const SignIn = () => {
           // TODO: Redirect to home
           console.log("Logged in successfully. Redirecting...");
         } else {
-          // TODO: Redirect to OTP verification
+          navigate("/otp-verification", { state: { email: formData.email } });
           console.log("Registered successfully. Redirecting to OTP verification...");
         }
       } else if (data?.error) {
@@ -148,7 +150,7 @@ const SignIn = () => {
           </p>
         )}
 
-        <p className="text-center text-sm mt-4 text-gray-400 cursor-pointer hover:text-pink-400 transition-colors duration-200">
+        <p onClick={()=> navigate("/forgot-password")} className="text-center text-sm mt-4 text-gray-400 cursor-pointer hover:text-pink-400 transition-colors duration-200">
           Forgot Password?
         </p>
 
@@ -161,7 +163,7 @@ const SignIn = () => {
               Continue with Google
             </span>
           </div>
-          <div className="flex flex-col items-center">
+          <div onClick={()=>navigate("/login-with-otp")} className="flex flex-col items-center">
             <div className="bg-white rounded-full p-2 mb-2 shadow-xl hover:scale-110 transition duration-300 cursor-pointer neon-icon-glow">
               <BsFingerprint className="text-3xl text-cyan-500" />
             </div>

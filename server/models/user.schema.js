@@ -77,6 +77,15 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: "default",
     },
+    resetPasswordToken: {
+        type: String,
+        default: null,
+    },
+    resetPasswordTokenExpires: {
+        type: Date,
+        default:null,
+    }
+
     //notification ans voice chat later on
 }, {
     timestamps: true,

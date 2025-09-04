@@ -1,0 +1,122 @@
+import React, { useState } from 'react';
+import axiosInstance from '../../api/axios';
+
+// Image imports - adjust paths based on your project structure
+import dice1 from '../../src/assets/dicePng1.png';
+import dice2 from '../../src/assets/dicePng2.png';
+import Pawn1 from '../../src/assets/ludoToken1.png';
+import Pawn2 from '../../src/assets/ludoToken2.png';
+
+const ForgotPassword = () => {
+  const [email, setEmail] = useState('');
+  const [resMessage, setResMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false); // New state for loading
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setResMessage("");
+    
+    if (isLoading) {
+      return;
+    }
+
+    if (!email) {
+      setResMessage("Please enter your email address.");
+      return;
+    }
+
+    setIsLoading(true); 
+
+    try {
+      const response = await axiosInstance.post("/auth/forgot-password", { email });
+      
+      if (response.data.success) {
+        setResMessage(response.data.message);
+      } else {
+        setResMessage(response.data.message);
+      }
+    } catch (error) {
+      if (error.response) {
+        setResMessage(error.response.data.message || "An error occurred. Please try again.");
+      } else if (error.request) {
+        setResMessage("No response from server. Check your network connection.");
+      } else {
+        setResMessage("Request failed. Please try again.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-purple-900 via-blue-900 to-pink-900 text-white flex items-center justify-center p-4">
+      {/* Background Elements (Dice and Pawns) - Positioning logic remains the same */}
+      <img
+        src={dice2}
+        alt="Ludo Dice"
+        className="absolute md:top-20 md:left-10 w-70 h-70 transform -rotate-12 opacity-60 animate-float z-100 top-0 left-0"
+      />
+      <img
+        src={Pawn1}
+        alt="Ludo Pawn"
+        className="absolute top-10 right-20 w-60 h-60 transform rotate-45 opacity-70 animate-float-delay z-100"
+      />
+      <img
+        src={dice1}
+        alt="Ludo Dice"
+        className="absolute bottom-10 left-32 w-50 h-50 transform rotate-45 opacity-50 animate-float z-100"
+      />
+      <img
+        src={Pawn2}
+        alt="Ludo Pawn"
+        className="absolute left-130 top-5 w-56 h-56 transform -rotate-12 opacity-80 animate-float-delay z-100"
+      />
+
+      {/* Main Card */}
+      <div className="relative z-10 p-8 rounded-3xl bg-gray-800 bg-opacity-50 backdrop-filter backdrop-blur-lg shadow-2xl w-full max-w-sm border-2 border-purple-500 border-opacity-30">
+        <h1 className="text-4xl font-bold text-center mb-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400 p-2">
+          Forgot Password
+        </h1>
+        <p className="text-center text-sm mb-8 text-gray-300">
+          Enter your registered email to receive a password reset link.
+        </p>
+
+        <form className="space-y-6" onSubmit={handleSubmit}>
+          <div className="relative">
+            <input
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-3 bg-gray-700 bg-opacity-70 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition duration-300 placeholder-gray-400"
+              required
+            />
+          </div>
+          
+          <button
+            type="submit"
+            disabled={isLoading}
+            className={`w-full py-3 rounded-full text-lg font-semibold transition duration-300 ease-in-out transform hover:scale-105 shadow-lg ${
+              isLoading
+                ? 'bg-gray-600 cursor-not-allowed' 
+                : 'bg-gradient-to-r from-fuchsia-500 to-purple-600'
+            }`}
+          >
+            {isLoading ? 'Sending...' : 'Send Reset Link'}
+          </button>
+        </form>
+
+        <div className='flex justify-center text-amber-300 p-2'>
+            <p className='flex justify-center'>{resMessage}</p>
+        </div>
+        <div className="mt-8 border-t border-gray-600 pt-6 flex justify-center">
+            <a href="/login-register" className="text-sm text-gray-400 hover:text-white transition duration-200">
+                Back to Login
+            </a>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ForgotPassword;

@@ -2,6 +2,8 @@ import User from "../models/user.schema.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import sendOtpMail from "../utils/sendOtpMail.js";
+import crypto from "crypto";
+import sendResetPasswordMail from "../utils/sendResetPasswordMail.js";
 
 // Generate JWT Token
 const generateToken = (user) =>
@@ -170,6 +172,90 @@ export const otpVerificationController = async (req, res, next) => {
       success: true,
       error: false,
       token,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// FORGOT PASSWORD
+export const forgotPasswordController = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+
+    // Validation
+    if (!email) {
+      const error = new Error("Email required to reset password");
+      error.statusCode = 400;
+      return next(error);
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      const error = new Error("User not found! Please register your account");
+      error.statusCode = 404;
+      return next(error);
+    }
+
+    // Generate reset password token
+    const token = crypto.randomBytes(32).toString("hex");
+    const tokenExpires = Date.now() + 5 * 60 * 1000; // 5 minutes
+
+    user.resetPasswordToken = token;
+    user.resetPasswordTokenExpires = tokenExpires;
+    await user.save();
+
+    // Create reset URL
+    const url = `${process.env.FRONTEND_URI}/reset-password?token=${token}`;
+
+    // Send reset password email
+    await sendResetPasswordMail(email, url);
+
+    return res.status(200).json({
+      message: `Check your email: ${email}`,
+      success: true,
+      error: false,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// RESET PASSWORD
+export const resetPasswordController = async (req, res, next) => {
+  try {
+    const { newPassword,token} = req.body;
+
+    if (!token || !newPassword) {
+      const error = new Error("Token and new password are required");
+      error.statusCode = 400;
+      return next(error);
+    }
+
+    const user = await User.findOne({ resetPasswordToken: token });
+    if (!user) {
+      const error = new Error("Invalid or expired token");
+      error.statusCode = 404;
+      return next(error);
+    }
+
+    // Check if token is expired
+    if (Date.now() > user.resetPasswordTokenExpires) {
+      const error = new Error("Token has expired, request a new one");
+      error.statusCode = 400;
+      return next(error);
+    }
+
+    // Update password
+    user.password = newPassword; // Hashing will happen if your schema has pre-save hook
+    user.resetPasswordToken = null;
+    user.resetPasswordTokenExpires = null;
+    await user.save();
+
+    return res.status(200).json({
+      message: "Password reset successfully",
+      success: true,
+      error: false,
     });
   } catch (err) {
     next(err);
