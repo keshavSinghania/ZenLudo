@@ -8,9 +8,10 @@ import Dashboard from "../pages/Dashboard/Dashboard.jsx";
 import PlayWithBots from "../pages/Dashboard/PlayWithBots.jsx";
 import CreateJoinRoom from "../pages/Dashboard/CreateJoinRoom.jsx";
 import PlayWithFriends from "../pages/Dashboard/PlayWithFriends.jsx"
+import LudoBoard from "../LudoBoardMain/LudoBoard.jsx";
 
 const Friends = () => <div className="text-white text-3xl">Friends</div>;
-const History = () => <div className="text-white text-3xl">History</div>;
+// const History = () => <div className="text-white text-3xl">History</div>;
 const Profile = () => <div className="text-white text-3xl">Profile</div>;
 
 export const router = createBrowserRouter([
@@ -48,7 +49,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "history",
-        element: <History />,
+        element: <LudoBoard/>,
       },
       {
         path: "profile",
@@ -67,6 +68,10 @@ export const router = createBrowserRouter([
   {
     path: "/login-with-otp",
     element: <LoginWithOtp />,
+  },
+  {
+    path: "/game",
+    element: <LudoBoard/>,
   },
   {
     path: "*",

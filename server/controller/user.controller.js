@@ -246,8 +246,10 @@ export const resetPasswordController = async (req, res, next) => {
       return next(error);
     }
 
+    //bcrypt new password
+    const hashedNewPassword = await bcrypt.hashSync(newPassword,10);
     // Update password
-    user.password = newPassword; // Hashing will happen if your schema has pre-save hook
+    user.password = hashedNewPassword;
     user.resetPasswordToken = null;
     user.resetPasswordTokenExpires = null;
     await user.save();

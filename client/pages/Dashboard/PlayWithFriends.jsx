@@ -1,7 +1,9 @@
 import React from "react";
 import bgImage from "../../src/assets/LudoBoard1.png";
+import { useNavigate } from "react-router-dom";
 
 function PlayWithFriends() {
+  const navigate = useNavigate();
   const handlePlayOnSameDevice = () => {
     console.log("Starting a new game on the same device...");
     // Add logic here to navigate to the game board for local play
@@ -38,7 +40,7 @@ function PlayWithFriends() {
               Challenge friends and family on a single device, no internet needed.
             </p>
             <button
-              onClick={handlePlayOnSameDevice}
+              onClick={()=>{navigate('game')}}
               className="w-full py-3 rounded-lg font-bold text-lg bg-gradient-to-r from-emerald-700 to-green-700 hover:from-emerald-800 hover:to-green-800 transition-all duration-300 transform hover:scale-105 shadow-[0_0_20px_rgba(16,185,129,0.4)]"
             >
               Start Local Game

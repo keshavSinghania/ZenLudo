@@ -110,7 +110,7 @@ const ForgotPassword = () => {
             <p className='flex justify-center'>{resMessage}</p>
         </div>
         <div className="mt-8 border-t border-gray-600 pt-6 flex justify-center">
-            <a href="/login-register" className="text-sm text-gray-400 hover:text-white transition duration-200">
+            <a href="/" className="text-sm text-gray-400 hover:text-white transition duration-200">
                 Back to Login
             </a>
         </div>

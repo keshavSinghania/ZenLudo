@@ -44,7 +44,7 @@ const SignIn = () => {
         setResMessage(data.message);
         if (isLoginMode) {
           localStorage.setItem("token", data.token);
-          // TODO: Redirect to home
+          navigate("/dashboard")
           console.log("Logged in successfully. Redirecting...");
         } else {
           navigate("/otp-verification", { state: { email: formData.email } });
