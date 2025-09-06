@@ -1,13 +1,15 @@
+// Pawn.jsx
+
 import React from 'react';
 
-const Pawn = ({ color, children }) => {
+const Pawn = ({ color, children, onClick }) => {
   return (
     <div 
       className={`
         glowing-circle-pawn ${color}
       `}
+      onClick={onClick}
     >
-      {/* This is the new part for the number */}
       <div 
         className="text-white text-lg font-bold z-10" 
         style={{ textShadow: "0 0 5px rgba(0,0,0,0.5)" }}

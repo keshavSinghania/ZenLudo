@@ -82,8 +82,8 @@
 /* Core Glowing Circle Pawn */
 .glowing-circle-pawn {
   position: relative;
-  width: 45px;
-  height: 45px;
+  width: 1.7rem;
+  height: 1.7rem;
   border-radius: 50%;
   border: 2px solid rgba(255, 255, 255, 0.7); /* Subtle white border for definition */
   display: flex;
@@ -133,3 +133,27 @@
     0 0 20px #f1c40f,
     0 0 30px #f1c40f;
 }
+
+/* :root {
+  font-size: 16px;
+  @media (max-width: 768px) { font-size: 14px; }
+  @media (max-width: 480px) { font-size: 12px; }
+}
+
+.glowing-circle-pawn {
+  width: 1.2rem;
+  height: 1.2rem;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+
+.glowing-circle-pawn.red { background-color: rgba(255, 0, 0, 0.8); }
+.glowing-circle-pawn.green { background-color: rgba(0, 128, 0, 0.8); }
+.glowing-circle-pawn.yellow { background-color: rgba(255, 255, 0, 0.8); }
+.glowing-circle-pawn.blue { background-color: rgba(0, 0, 255, 0.8); } */
