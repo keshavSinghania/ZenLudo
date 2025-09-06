@@ -104,3 +104,27 @@ touch .env
 
 # Run development servers
 npm run dev
+
+
+
+
+## Environment Variables Setup
+
+Create a `.env` file in the root of your project and add the following variables:
+
+```env
+# Server Port
+PORT=8080
+
+# MongoDB Connection URI
+MONGO_URI=mongodb+srv://<USERNAME>:<PASSWORD>@cluster0.<CLUSTER_ID>.mongodb.net/?retryWrites=true&w=majority&appName=<APP_NAME>
+
+# JWT Secret Key
+JWT_SECRET=<YOUR_JWT_SECRET>
+
+# Email Credentials
+EMAIL_USER=<YOUR_EMAIL>
+EMAIL_PASS=<YOUR_EMAIL_APP_PASSWORD>
+
+# Frontend URL
+FRONTEND_URI=http://localhost:5173
