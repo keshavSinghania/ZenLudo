@@ -6,12 +6,10 @@
     transform: translateY(0) translateX(0);
     opacity: 0.4;
   }
-
   50% {
     transform: translateY(-25px) translateX(10px);
     opacity: 1;
   }
-
   100% {
     transform: translateY(0) translateX(0);
     opacity: 0.4;
@@ -28,22 +26,18 @@
     background-color: rgba(255, 0, 255, 0.7);
     box-shadow: 0 0 10px rgba(255, 0, 255, 0.8);
   }
-
   25% {
     background-color: rgba(0, 255, 255, 0.7);
     box-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
   }
-
   50% {
     background-color: rgba(0, 255, 0, 0.7);
     box-shadow: 0 0 10px rgba(0, 255, 0, 0.8);
   }
-
   75% {
     background-color: rgba(255, 255, 0, 0.7);
     box-shadow: 0 0 10px rgba(255, 255, 0, 0.8);
   }
-
   100% {
     background-color: rgba(255, 0, 255, 0.7);
     box-shadow: 0 0 10px rgba(255, 0, 255, 0.8);
@@ -56,13 +50,11 @@
 
 /* Neon Pulse Glow for Board */
 @keyframes pulseGlow {
-
   0%,
   100% {
     filter: drop-shadow(0 0 12px rgba(255, 0, 255, 0.7)) drop-shadow(0 0 25px rgba(0, 0, 255, 0.5));
     transform: scale(1);
   }
-
   50% {
     filter: drop-shadow(0 0 22px rgba(255, 0, 255, 0.9)) drop-shadow(0 0 45px rgba(0, 0, 255, 0.7));
     transform: scale(1.03);
@@ -79,81 +71,163 @@
   outline: none;
 }
 
-/* Core Glowing Circle Pawn */
-.glowing-circle-pawn {
+/* Neon Pawn with Flat Bottom and Rounded Top */
+.neon-pawn {
   position: relative;
-  width: 1.7rem;
-  height: 1.7rem;
-  border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.7); /* Subtle white border for definition */
+  width: 1.5rem; /* Adjusted to fit grid */
+  height: 1.8rem; /* Taller for rounded top */
+  border-radius: 0 0 50% 50% / 0 0 100% 100%; /* Flat bottom, rounded top */
+  border: 2px solid rgba(255, 255, 255, 0.7); /* Subtle white border */
   display: flex;
   justify-content: center;
   align-items: center;
   transform: translateY(0);
-  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out; /* Smooth movement */
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+  animation: pulseGlow 4s ease-in-out infinite; /* Match board glow */
 }
 
-/* Central Inner Glow (Optional, but adds depth) */
-.glowing-circle-pawn::before {
+/* Inner Glow for Depth */
+.neon-pawn::before {
   content: '';
   position: absolute;
-  width: 70%;
-  height: 70%;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.3); /* Lighter center */
-  filter: blur(3px); /* Soften the inner glow */
+  top: -0.2rem; /* Adjust for rounded top */
+  width: 80%;
+  height: 40%;
+  border-radius: 50% 50% 0 0; /* Rounded top effect */
+  background: rgba(255, 255, 255, 0.3);
+  filter: blur(3px);
+  z-index: -1;
 }
 
-/* Color Styles with Radiant Glow */
-.glowing-circle-pawn.red {
+/* Color Styles with Theme-Matching Glow */
+.neon-pawn.red {
   background-color: #e74c3c;
   box-shadow: 
-    0 0 10px #e74c3c, /* Main glow */
+    0 0 10px #e74c3c,
     0 0 20px #e74c3c,
-    0 0 30px #e74c3c;
+    0 0 30px #e74c3c,
+    inset 0 0 5px #e74c3c; /* Inner glow */
 }
-.glowing-circle-pawn.blue {
+.neon-pawn.blue {
   background-color: #3498db;
   box-shadow: 
     0 0 10px #3498db,
     0 0 20px #3498db,
-    0 0 30px #3498db;
+    0 0 30px #3498db,
+    inset 0 0 5px #3498db;
 }
-.glowing-circle-pawn.green {
+.neon-pawn.green {
   background-color: #2ecc71;
   box-shadow: 
     0 0 10px #2ecc71,
     0 0 20px #2ecc71,
-    0 0 30px #2ecc71;
+    0 0 30px #2ecc71,
+    inset 0 0 5px #2ecc71;
 }
-.glowing-circle-pawn.yellow {
+.neon-pawn.yellow {
   background-color: #f1c40f;
   box-shadow: 
     0 0 10px #f1c40f,
     0 0 20px #f1c40f,
-    0 0 30px #f1c40f;
+    0 0 30px #f1c40f,
+    inset 0 0 5px #f1c40f;
 }
 
-/* :root {
-  font-size: 16px;
-  @media (max-width: 768px) { font-size: 14px; }
-  @media (max-width: 480px) { font-size: 12px; }
+
+/* Custom shadow effects for hover states */
+.hover\:shadow-neon-red-hover:hover {
+  box-shadow: 0 0 15px 5px rgba(255, 0, 0, 0.7), 0 0 25px 10px rgba(255, 0, 0, 0.5);
 }
 
-.glowing-circle-pawn {
-  width: 1.2rem;
-  height: 1.2rem;
-  border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.7);
+.hover\:shadow-neon-green-hover:hover {
+  box-shadow: 0 0 15px 5px rgba(0, 255, 0, 0.7), 0 0 25px 10px rgba(0, 255, 0, 0.5);
+}
+
+.hover\:shadow-neon-blue-hover:hover {
+  box-shadow: 0 0 15px 5px rgba(0, 0, 255, 0.7), 0 0 25px 10px rgba(0, 0, 255, 0.5);
+}
+
+.hover\:shadow-neon-yellow-hover:hover {
+  box-shadow: 0 0 15px 5px rgba(255, 255, 0, 0.7), 0 0 25px 10px rgba(255, 255, 0, 0.5);
+}
+
+/* Base styles for the dice container */
+.dice-container {
+  width: 85px;
+  height: 85px;
+  z-index: 20;
+  border-radius: 0.25rem;
+  text-align: center;
   display: flex;
-  justify-content: center;
   align-items: center;
-  margin: 0;
-  padding: 0;
-  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+  justify-content: center;
+  border-width: 2px;
+  border-style: solid;
 }
 
-.glowing-circle-pawn.red { background-color: rgba(255, 0, 0, 0.8); }
-.glowing-circle-pawn.green { background-color: rgba(0, 128, 0, 0.8); }
-.glowing-circle-pawn.yellow { background-color: rgba(255, 255, 0, 0.8); }
-.glowing-circle-pawn.blue { background-color: rgba(0, 0, 255, 0.8); } */
+/* Styles for the dice dots (pips) */
+.dice-dots {
+  width: 100%;
+  height: 100%;
+  padding: 15%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  place-items: center;
+}
+
+.dice-dots .dot {
+  width: 15px;
+  height: 15px;
+  background-color: white;
+  border-radius: 50%;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+  visibility: hidden;
+}
+
+/* dice  */
+
+/* 1 dot: Center */
+.dice-dots[data-value="1"] .dot:nth-child(3) {
+  visibility: visible;
+}
+
+/* 2 dots: Mid-left and Mid-right */
+.dice-dots[data-value="2"] .dot:nth-child(2),
+.dice-dots[data-value="2"] .dot:nth-child(4) {
+  visibility: visible;
+}
+
+/* 3 dots: Mid-left, Mid, and Mid-right */
+.dice-dots[data-value="3"] .dot:nth-child(2),
+.dice-dots[data-value="3"] .dot:nth-child(3),
+.dice-dots[data-value="3"] .dot:nth-child(4) {
+  visibility: visible;
+}
+
+/* 4 dots: Top-left, Top-right, Bottom-left, Bottom-right (standard) */
+.dice-dots[data-value="4"] .dot:nth-child(1),
+.dice-dots[data-value="4"] .dot:nth-child(2),
+.dice-dots[data-value="4"] .dot:nth-child(5),
+.dice-dots[data-value="4"] .dot:nth-child(6) {
+  visibility: visible;
+}
+
+/* 5 dots: Center, and four corners */
+.dice-dots[data-value="5"] .dot:nth-child(1),
+.dice-dots[data-value="5"] .dot:nth-child(2),
+.dice-dots[data-value="5"] .dot:nth-child(3),
+.dice-dots[data-value="5"] .dot:nth-child(5),
+.dice-dots[data-value="5"] .dot:nth-child(6) {
+  visibility: visible;
+}
+
+/* 6 dots: Two columns of three dots (mid-left, mid, mid-right) */
+.dice-dots[data-value="6"] .dot:nth-child(1),
+.dice-dots[data-value="6"] .dot:nth-child(2),
+.dice-dots[data-value="6"] .dot:nth-child(3),
+.dice-dots[data-value="6"] .dot:nth-child(4),
+.dice-dots[data-value="6"] .dot:nth-child(5),
+.dice-dots[data-value="6"] .dot:nth-child(6) {
+  visibility: visible;
+}

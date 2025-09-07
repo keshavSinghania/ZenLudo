@@ -59,8 +59,15 @@ export const HOME_PATHS = {
 
 // Pawn starting positions in home base
 export const START_POSITIONS = {
-  red: [{ row: 2, col: 2 }, { row: 3, col: 2 }, { row: 2, col: 3 }, { row: 3, col: 3 }],
-  green: [{ row: 2, col: 12 }, { row: 3, col: 12 }, { row: 2, col: 13 }, { row: 3, col: 13 }],
-  yellow: [{ row: 12, col: 12 }, { row: 13, col: 12 }, { row: 12, col: 13 }, { row: 13, col: 13 }],
-  blue: [{ row: 12, col: 2 }, { row: 13, col: 2 }, { row: 12, col: 3 }, { row: 13, col: 3 }],
+  red: [{ row: 2, col: 2 }, { row: 2, col: 12 }, { row: 12, col: 2 }, { row: 12, col: 12 }],
+  green: [{ row: 2, col: 2 } ,{ row: 2, col: 12 }, { row: 12, col: 2 }, { row: 12, col: 12 }],
+  yellow: [{ row: 2, col: 2 }, { row: 2, col: 12 },{ row: 12, col: 2 },  { row: 12, col: 12 }],
+  blue: [{ row: 2, col: 2 }, { row: 2, col: 12 }, { row: 12, col: 2}, { row: 12, col: 12 }],
 };
+// // Pawn starting positions in home base
+// export const START_POSITIONS = {
+//   red: [{ row: 2, col: 2 }, { row: 3, col: 2 }, { row: 2, col: 3 }, { row: 3, col: 3 }],
+//   green: [{ row: 2, col: 12 }, { row: 3, col: 12 }, { row: 2, col: 13 }, { row: 3, col: 13 }],
+//   yellow: [{ row: 12, col: 12 }, { row: 13, col: 12 }, { row: 12, col: 13 }, { row: 13, col: 13 }],
+//   blue: [{ row: 12, col: 2 }, { row: 13, col: 2 }, { row: 12, col: 3 }, { row: 13, col: 3 }],
+// };

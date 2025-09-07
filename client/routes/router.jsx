@@ -11,7 +11,7 @@ import PlayWithFriends from "../pages/Dashboard/PlayWithFriends.jsx"
 import LudoBoard from "../LudoBoardMain/LudoBoard.jsx";
 
 const Friends = () => <div className="text-white text-3xl">Friends</div>;
-// const History = () => <div className="text-white text-3xl">History</div>;
+const History = () => <div className="text-white text-3xl">History</div>;
 const Profile = () => <div className="text-white text-3xl">Profile</div>;
 
 export const router = createBrowserRouter([
@@ -49,7 +49,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "history",
-        element: <LudoBoard/>,
+        element: <History/>,
       },
       {
         path: "profile",
