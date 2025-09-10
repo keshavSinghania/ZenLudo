@@ -3,6 +3,9 @@ import React from 'react';
 const Notice = () => {
   return (
     <div className="max-w-3xl mx-auto p-6 mt-10 bg-gradient-to-r from-purple-800 via-blue-800 to-pink-800 text-white rounded-2xl shadow-lg border-2 border-purple-500">
+      {/* Read Me Header */}
+      <h2 className="text-2xl font-bold mb-4 text-center text-yellow-300">⚠️ Please Read Me ⚠️</h2>
+
       <h1 className="text-3xl font-bold mb-4 text-center">Notice</h1>
       <p className="mb-4">
         Hey! This is <span className="font-semibold">Keshav Singhania</span>, thanks for showing interest in my <span className="italic font-semibold">ZenLudo</span> Project.

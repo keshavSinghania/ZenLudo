@@ -42,7 +42,7 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <ProtectedRoutes><PlayWithBots /></ProtectedRoutes>,
+        element: <ProtectedRoutes><Notice/></ProtectedRoutes>,
       },
       {
         path: "play-with-bots",
