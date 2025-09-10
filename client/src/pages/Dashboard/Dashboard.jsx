@@ -96,8 +96,8 @@ function Dashboard() {
             { name: "Friends", icon: "👥", path: "friends" },
             { name: "History", icon: "📜", path: "history" },
             { name: "Profile", icon: "👤", path: "profile" },
-            { name: "Logout", icon: <CiLogout />, path: "logout" },
             { name: "Notice", icon: <IoIosWarning />, path: "notice" },
+            { name: "Logout", icon: <CiLogout />, path: "logout" },
           ].map((item, index) => (
             <li key={index}>
               <NavLink
