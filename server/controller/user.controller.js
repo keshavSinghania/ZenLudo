@@ -95,6 +95,7 @@ export const loginUserController = async (req, res, next) => {
   }
 };
 
+
 // SEND OTP 
 export const sendOtpController = async (req, res, next) => {
   try {

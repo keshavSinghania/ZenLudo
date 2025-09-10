@@ -2,7 +2,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:8080/api/v1", //backend url
+  baseURL: import.meta.env.VITE_BACKEND_URL, 
   timeout: 10000,
   withCredentials: true, 
 });

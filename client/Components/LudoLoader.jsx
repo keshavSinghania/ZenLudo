@@ -1,7 +1,7 @@
 import React from "react";
 import bgImage from "../src/assets/LudoBoard1.png";
 
-function LudoLoader() {
+function LudoLoader({loadingMessage}) {
   // Floating glowing particles
   const particles = Array.from({ length: 20 }, (_, i) => {
     const size = Math.random() * 8 + 4;
@@ -44,7 +44,7 @@ function LudoLoader() {
 
         {/* Loading Text */}
         <h2 className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-400 bg-clip-text text-transparent animate-pulse p-5">
-          LOADING GAME...
+          {loadingMessage || "Loading"}
         </h2>
       </div>
     </div>

@@ -1,10 +1,22 @@
 import express from "express"
 import { forgotPasswordController, loginUserController, otpVerificationController, registerUserController, resetPasswordController, sendOtpController } from "../controller/user.controller.js";
+import authVerifyMiddleware from "../middlewares/authVerifyMiddleware.js";
 export const authRouter = express.Router();
 
-authRouter.post("/register",registerUserController);
-authRouter.post("/login",loginUserController);
-authRouter.post("/send-otp",sendOtpController);
-authRouter.post("/otp-verification",otpVerificationController);
-authRouter.post("/forgot-password",forgotPasswordController);
-authRouter.put("/reset-password",resetPasswordController);
+authRouter.post("/register", registerUserController);
+authRouter.post("/login", loginUserController); 
+authRouter.post("/logout", sendOtpController);
+authRouter.post("/otp-verification", otpVerificationController);
+authRouter.post("/forgot-password", forgotPasswordController);
+authRouter.put("/reset-password", resetPasswordController);
+
+
+authRouter.get("/verify-auth", authVerifyMiddleware, (req, res) => {
+    res.json({
+        message: "User is authenticated",
+        user: {
+            id: req.user._id,
+            email: req.user.email,
+        },
+    });
+});

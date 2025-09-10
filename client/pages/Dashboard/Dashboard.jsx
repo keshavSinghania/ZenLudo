@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
-
+import { CiLogout } from "react-icons/ci";
 function Dashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const location = useLocation();
@@ -90,6 +90,7 @@ function Dashboard() {
             { name: "Friends", icon: "👥", path: "friends" },
             { name: "History", icon: "📜", path: "history" },
             { name: "Profile", icon: "👤", path: "profile" },
+            {name: "Logout", icon: <CiLogout/>, path: "logout"}
           ].map((item, index) => (
             <li key={index}>
               <NavLink

@@ -9,6 +9,9 @@ import PlayWithBots from "../pages/Dashboard/PlayWithBots.jsx";
 import CreateJoinRoom from "../pages/Dashboard/CreateJoinRoom.jsx";
 import PlayWithFriends from "../pages/Dashboard/PlayWithFriends.jsx"
 import PlayLocalBoard from "../LudoBoardMain/PlayLocalBoard.jsx";
+import ProtectedRoutes from "./ProtectedRoutes.jsx";
+import Logout from "../pages/AuthPages/Logout.jsx";
+import PublicRoutes from "./PublicRoutes.jsx";
 
 const Friends = () => <div className="text-white text-3xl">Friends</div>;
 const History = () => <div className="text-white text-3xl">History</div>;
@@ -17,11 +20,11 @@ const Profile = () => <div className="text-white text-3xl">Profile</div>;
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <SignIn />,
+    element: <PublicRoutes><SignIn /></PublicRoutes>,
   },
   {
     path: "/otp-verification",
-    element: <OtpVerification />,
+    element: <PublicRoutes><OtpVerification /></PublicRoutes> ,
   },
   {
     path: "/dashboard",
@@ -29,49 +32,53 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <PlayWithBots />,
+        element: <ProtectedRoutes><PlayWithBots /></ProtectedRoutes>,
       },
       {
         path: "play-with-bots",
-        element: <PlayWithBots />,
+        element: <ProtectedRoutes><PlayWithBots /></ProtectedRoutes>,
       },
       {
         path: "play-with-friends",
-        element: <PlayWithFriends />,
+        element: <ProtectedRoutes><PlayWithFriends /></ProtectedRoutes>,
       },
       {
         path: "create-join-room",
-        element: <CreateJoinRoom />,
+        element: <ProtectedRoutes><CreateJoinRoom /></ProtectedRoutes>,
       },
       {
         path: "friends",
-        element: <Friends/>
+        element: <ProtectedRoutes><Friends /></ProtectedRoutes>
       },
       {
         path: "history",
-        element: <History/>,
+        element: <ProtectedRoutes><History /></ProtectedRoutes>,
       },
       {
         path: "profile",
-        element: <Profile />,
+        element: <ProtectedRoutes><Profile /></ProtectedRoutes>,
+      },
+      {
+        path: "logout",
+        element: <Logout />
       },
     ],
   },
   {
     path: "/forgot-password",
-    element: <ForgotPassword />,
+    element: <PublicRoutes><ForgotPassword /></PublicRoutes>,
   },
   {
     path: "/reset-password",
-    element: <ResetPassword />,
+    element: <PublicRoutes><ResetPassword /></PublicRoutes>,
   },
   {
     path: "/login-with-otp",
-    element: <LoginWithOtp />,
+    element: <PublicRoutes><LoginWithOtp /></PublicRoutes>,
   },
   {
     path: "/play/local",
-    element: <PlayLocalBoard/>,
+    element: <ProtectedRoutes><PlayLocalBoard /></ProtectedRoutes>,
   },
   {
     path: "*",
