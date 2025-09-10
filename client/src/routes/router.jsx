@@ -1,17 +1,27 @@
 import { createBrowserRouter } from "react-router-dom";
-import SignIn from "../pages/AuthPages/SignIn.jsx";
-import OtpVerification from "../pages/AuthPages/OtpVerification.jsx";
-import ForgotPassword from "../pages/AuthPages/ForgotPassword.jsx";
-import ResetPassword from "../pages/AuthPages/ResetPassword.jsx";
-import LoginWithOtp from "../pages/AuthPages/LoginWithOtp.jsx";
-import Dashboard from "../pages/Dashboard/Dashboard.jsx";
-import PlayWithBots from "../pages/Dashboard/PlayWithBots.jsx";
-import CreateJoinRoom from "../pages/Dashboard/CreateJoinRoom.jsx";
-import PlayWithFriends from "../pages/Dashboard/PlayWithFriends.jsx"
-import PlayLocalBoard from "../LudoBoardMain/PlayLocalBoard.jsx";
-import ProtectedRoutes from "./ProtectedRoutes.jsx";
-import Logout from "../pages/AuthPages/Logout.jsx";
-import PublicRoutes from "./PublicRoutes.jsx";
+
+// Auth Pages
+import SignIn from "../pages/AuthPages/SignIn";
+import OtpVerification from "../pages/AuthPages/OtpVerification";
+import ForgotPassword from "../pages/AuthPages/ForgotPassword";
+import ResetPassword from "../pages/AuthPages/ResetPassword";
+import LoginWithOtp from "../pages/AuthPages/LoginWithOtp";
+import Logout from "../pages/AuthPages/Logout";
+
+// Dashboard Pages
+import Dashboard from "../pages/Dashboard/Dashboard";
+import PlayWithBots from "../pages/Dashboard/PlayWithBots";
+import PlayWithFriends from "../pages/Dashboard/PlayWithFriends";
+import CreateJoinRoom from "../pages/Dashboard/CreateJoinRoom";
+
+// Ludo Board
+import PlayLocalBoard from "../LudoBoardMain/PlayLocalBoard";
+
+// Routes helpers
+import ProtectedRoutes from "./ProtectedRoutes";
+import PublicRoutes from "./PublicRoutes";
+import Notice from "../pages/Dashboard/Notice";
+
 
 const Friends = () => <div className="text-white text-3xl">Friends</div>;
 const History = () => <div className="text-white text-3xl">History</div>;
@@ -57,6 +67,10 @@ export const router = createBrowserRouter([
       {
         path: "profile",
         element: <ProtectedRoutes><Profile /></ProtectedRoutes>,
+      },
+      {
+        path: "notice",
+        element: <ProtectedRoutes><Notice/></ProtectedRoutes>,
       },
       {
         path: "logout",

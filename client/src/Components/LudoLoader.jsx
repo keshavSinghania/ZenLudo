@@ -1,5 +1,5 @@
 import React from "react";
-import bgImage from "../src/assets/LudoBoard1.png";
+import bgImage from "../assets/LudoBoard1.png";
 
 function LudoLoader({loadingMessage}) {
   // Floating glowing particles

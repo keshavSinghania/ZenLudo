@@ -1,13 +1,13 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { BsFingerprint } from 'react-icons/bs';
 import { useLocation, useNavigate } from 'react-router-dom';
-import axiosInstance from '../../api/axios';
+import axiosInstance from '../../api/axios.js';
 
 // Image imports
-import dice1 from '../../src/assets/dicePng1.png';
-import dice2 from '../../src/assets/dicePng5.png';
-import Pawn1 from '../../src/assets/ludoToken6.png';
-import Pawn2 from '../../src/assets/ludoToken4.png';
+import dice1 from '../../assets/dicePng1.png';
+import dice2 from '../../assets/dicePng5.png';
+import Pawn1 from '../../assets/ludoToken6.png';
+import Pawn2 from '../../assets/ludoToken4.png';
 
 const OTP_LENGTH = 6;
 

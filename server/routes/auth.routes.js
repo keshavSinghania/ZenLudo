@@ -5,7 +5,7 @@ export const authRouter = express.Router();
 
 authRouter.post("/register", registerUserController);
 authRouter.post("/login", loginUserController); 
-authRouter.post("/logout", sendOtpController);
+authRouter.post("/send-otp", sendOtpController);
 authRouter.post("/otp-verification", otpVerificationController);
 authRouter.post("/forgot-password", forgotPasswordController);
 authRouter.put("/reset-password", resetPasswordController);

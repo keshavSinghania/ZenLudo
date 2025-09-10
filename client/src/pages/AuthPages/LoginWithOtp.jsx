@@ -1,89 +1,95 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { BsFingerprint } from 'react-icons/bs';
 import { useNavigate } from 'react-router-dom';
-import axiosInstance from '../../api/axios';
+import { useDispatch } from 'react-redux';
+import { login } from '../../ReactRedux/authSlice.js';
+import axiosInstance from '../../api/axios.js';
 
 // Image imports
-import dice1 from '../../src/assets/dicePng1.png';
-import dice2 from '../../src/assets/dicePng5.png';
-import Pawn1 from '../../src/assets/ludoToken6.png';
-import Pawn2 from '../../src/assets/ludoToken4.png';
+import dice1 from '../../assets/dicePng1.png';
+import dice2 from '../../assets/dicePng5.png';
+import Pawn1 from '../../assets/ludoToken6.png';
+import Pawn2 from '../../assets/ludoToken4.png';
 
 const OTP_LENGTH = 6;
 
 const LoginWithOtp = () => {
     const [email, setEmail] = useState('');
-    const [otp, setOtp] = useState(new Array(OTP_LENGTH).fill(""));
+    const [otp, setOtp] = useState(new Array(OTP_LENGTH).fill(''));
     const [timer, setTimer] = useState(60);
     const [isOtpSent, setIsOtpSent] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [resMessage, setResMessage] = useState("");
+    const [resMessage, setResMessage] = useState('');
+    const [isError, setIsError] = useState(false);
+
     const inputRefs = useRef([]);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     // Timer logic
     useEffect(() => {
         let interval = null;
         if (isOtpSent && timer > 0) {
             interval = setInterval(() => {
-                setTimer((prev) => prev - 1);
+                setTimer(prev => prev - 1);
             }, 1000);
-        } else if (timer === 0) {
-            clearInterval(interval);
         }
         return () => clearInterval(interval);
     }, [isOtpSent, timer]);
 
-    const handleSendOtp = async (e) => {
-        e.preventDefault();
-        setResMessage("");
-        setIsLoading(true);
-
+    // Send OTP
+    const sendOtp = async () => {
         if (!email) {
-            setResMessage("Please enter your email.");
-            setIsLoading(false);
+            setResMessage('Please enter your email.');
+            setIsError(true);
             return;
         }
 
         try {
-            // Using the same API endpoint as the sign-up flow
-            const response = await axiosInstance.post("/auth/send-otp", { email });
-            setResMessage(response.data?.message || "OTP sent successfully!");
+            setIsLoading(true);
+            const response = await axiosInstance.post('/auth/send-otp', { email });
+            setResMessage(response.data?.message || 'OTP sent successfully!');
+            setIsError(false);
             setIsOtpSent(true);
             setTimer(60);
-        } catch (error) {
-            setResMessage(error.response?.data?.message || "Failed to send OTP.");
+        } catch (err) {
+            setResMessage(err.response?.data?.message || 'Failed to send OTP.');
+            setIsError(true);
             setIsOtpSent(false);
         } finally {
             setIsLoading(false);
         }
     };
 
-    const handleVerifyOtp = async (e) => {
-        e.preventDefault();
-        setResMessage("");
-        setIsLoading(true);
-
-        const enteredOTP = otp.join("");
-        if (enteredOTP.length !== OTP_LENGTH) {
-            setResMessage("Please enter the complete 6-digit OTP.");
-            setIsLoading(false);
+    // Verify OTP
+    const verifyOtp = async () => {
+        const enteredOTP = otp.join('').trim();
+        if (!/^\d{6}$/.test(enteredOTP)) {
+            setResMessage('Please enter a valid 6-digit OTP.');
+            setIsError(true);
             return;
         }
 
         try {
-            const response = await axiosInstance.post("/auth/otp-verification", { email, otp: enteredOTP });
+            setIsLoading(true);
+            const response = await axiosInstance.post('/auth/otp-verification', {
+                email,
+                otp: enteredOTP,
+            });
+
             if (response.data?.success) {
-                setResMessage(response.data.message);
-                if (response.data?.token) {
-                    localStorage.setItem('token', response.data.token);
-                }
-                navigate("/dashboard");
+                localStorage.setItem('token', response.data.token);
+                dispatch(login({ authToken: response.data.token }));
+                setResMessage('OTP Verified! Redirecting...');
+                setIsError(false);
+                navigate('/dashboard');
             } else {
-                setResMessage(response.data?.message || "OTP verification failed.");
+                setResMessage(response.data?.message || 'OTP verification failed.');
+                setIsError(true);
             }
-        } catch (error) {
-            setResMessage(error.response?.data?.message || "An error occurred during verification.");
+        } catch (err) {
+            setResMessage(err.response?.data?.message || 'An error occurred during verification.');
+            setIsError(true);
         } finally {
             setIsLoading(false);
         }
@@ -91,22 +97,21 @@ const LoginWithOtp = () => {
 
     const handleChange = (element, index) => {
         if (isNaN(element.value)) return;
-        setOtp([...otp.map((d, idx) => (idx === index ? element.value : d))]);
+        setOtp(otp.map((d, idx) => (idx === index ? element.value : d)));
         if (element.value && index < OTP_LENGTH - 1) {
             inputRefs.current[index + 1].focus();
         }
     };
 
     const handleKeyDown = (e, index) => {
-        if (e.key === "Backspace" && !otp[index] && index > 0) {
+        if (e.key === 'Backspace' && !otp[index] && index > 0) {
             inputRefs.current[index - 1].focus();
         }
     };
 
-    const handleResend = (e) => {
-        e.preventDefault();
+    const handleResend = async () => {
         setTimer(60);
-        handleSendOtp(e);
+        await sendOtp();
     };
 
     return (
@@ -126,7 +131,7 @@ const LoginWithOtp = () => {
                     {isOtpSent ? "Enter the OTP sent to your email." : "Enter your email to receive an OTP."}
                 </p>
 
-                <form className="space-y-6">
+                <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
                     {!isOtpSent && (
                         <div className="relative">
                             <input
@@ -160,28 +165,28 @@ const LoginWithOtp = () => {
                         {!isOtpSent ? (
                             <button
                                 type="button"
-                                onClick={handleSendOtp}
+                                onClick={sendOtp}
                                 disabled={isLoading}
-                                className={`w-full py-3 rounded-full text-lg font-semibold transition duration-300 ease-in-out transform hover:scale-105 shadow-lg ${isLoading ? "bg-gray-600 cursor-not-allowed" : "bg-gradient-to-r from-fuchsia-500 to-purple-600"
-                                    }`}
+                                className={`w-full py-3 rounded-full text-lg font-semibold transition duration-300 ease-in-out transform hover:scale-105 shadow-lg ${isLoading ? 'bg-gray-600 cursor-not-allowed' : 'bg-gradient-to-r from-fuchsia-500 to-purple-600'}`}
                             >
-                                {isLoading ? "Sending..." : "Send OTP"}
+                                {isLoading ? 'Sending...' : 'Send OTP'}
                             </button>
                         ) : (
                             <button
                                 type="button"
-                                onClick={handleVerifyOtp}
-                                disabled={otp.join("").length !== OTP_LENGTH || isLoading}
-                                className={`w-full py-3 rounded-full text-lg font-semibold transition duration-300 ease-in-out transform hover:scale-105 shadow-lg ${otp.join("").length === OTP_LENGTH && !isLoading ? "bg-gradient-to-r from-fuchsia-500 to-purple-600" : "bg-gray-600 text-gray-400 cursor-not-allowed"
-                                    }`}
+                                onClick={verifyOtp}
+                                disabled={otp.join('').length !== OTP_LENGTH || isLoading}
+                                className={`w-full py-3 rounded-full text-lg font-semibold transition duration-300 ease-in-out transform hover:scale-105 shadow-lg ${otp.join('').length === OTP_LENGTH && !isLoading ? 'bg-gradient-to-r from-fuchsia-500 to-purple-600' : 'bg-gray-600 text-gray-400 cursor-not-allowed'}`}
                             >
-                                {isLoading ? "Verifying..." : "Verify OTP"}
+                                {isLoading ? 'Verifying...' : 'Verify OTP'}
                             </button>
                         )}
 
-                        <p className={`text-sm text-center font-semibold ${resMessage.includes("success") ? "text-green-400" : "text-red-400"}`}>
-                            {resMessage}
-                        </p>
+                        {resMessage && (
+                            <p className={`text-sm text-center font-semibold ${isError ? 'text-red-400' : 'text-green-400'}`}>
+                                {resMessage}
+                            </p>
+                        )}
 
                         {isOtpSent && (
                             <div className="text-sm text-gray-400">
@@ -202,7 +207,7 @@ const LoginWithOtp = () => {
                 </form>
 
                 <div className="mt-8 border-t border-gray-600 pt-6 flex justify-center">
-                    <a href="/login-register" className="text-sm text-gray-400 hover:text-white transition duration-200">
+                    <a href="/" className="text-sm text-gray-400 hover:text-white transition duration-200">
                         Back to Login
                     </a>
                 </div>

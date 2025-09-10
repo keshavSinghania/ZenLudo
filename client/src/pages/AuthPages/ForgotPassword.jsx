@@ -1,16 +1,14 @@
 import React, { useState } from 'react';
-import axiosInstance from '../../api/axios';
-
-// Image imports - adjust paths based on your project structure
-import dice1 from '../../src/assets/dicePng1.png';
-import dice2 from '../../src/assets/dicePng2.png';
-import Pawn1 from '../../src/assets/ludoToken1.png';
-import Pawn2 from '../../src/assets/ludoToken2.png';
+import axiosInstance from "../../api/axios.js"
+import dice1 from '../../assets/dicePng1.png';
+import dice2 from '../../assets/dicePng2.png';
+import Pawn1 from '../../assets/ludoToken1.png';
+import Pawn2 from '../../assets/ludoToken2.png';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
   const [resMessage, setResMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(false); // New state for loading
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

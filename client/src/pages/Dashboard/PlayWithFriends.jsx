@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import bgImage from "../../src/assets/LudoBoard1.png";
+import bgImage from "../../assets/LudoBoard1.png";
 import { useNavigate } from "react-router-dom";
-import ChooseNumOfPlayers from "../../Components/ChooseNumOfPlayers";
+import ChooseNumOfPlayers from "../../Components/ChooseNumOfPlayers.jsx";
 
 function PlayWithFriends() {
   const navigate = useNavigate();

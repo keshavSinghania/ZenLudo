@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import bgImage from "../src/assets/LudoBoard1.png";
+import bgImage from "../assets/LudoBoard1.png";
 import Pawn from "./Pawn.jsx";
 import {
   GLOBAL_PATH,

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { login, logout } from "../ReactRedux/authSlice.js";
-import axiosInstance from "../api/axios.js";
-import LudoLoader from "../Components/LudoLoader.jsx";
-import NetworkError from "../Components/NetworkError.jsx";
+import { login, logout } from "./ReactRedux/authSlice.js";
+import axiosInstance from "./api/axios.js"
+import LudoLoader from "./Components/LudoLoader.jsx";
+import NetworkError from "./Components/NetworkError.jsx";
 import { RouterProvider } from "react-router-dom";
-import { router } from "../routes/router.jsx";
+import { router } from "./routes/router.jsx";
 
 const App = () => {
   const [loading, setLoading] = useState(true);

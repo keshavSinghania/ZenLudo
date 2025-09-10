@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import bgImage from "../../src/assets/LudoBoard1.png";
-import dicePng7 from "../../src/assets/dicePng7.png"; 
-import ludoToken8 from "../../src/assets/LudoToken8.png"; 
+import bgImage from "../../assets/LudoBoard1.png";
+import dicePng7 from "../../assets/dicePng7.png"; 
+import ludoToken8 from "../../assets/LudoToken8.png"; 
 
 function CreateJoinRoom() {
   const [roomCode, setRoomCode] = useState("");

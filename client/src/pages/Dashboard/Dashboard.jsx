@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { CiLogout } from "react-icons/ci";
+import LudoLoader from "../../Components/LudoLoader";
+import { useSelector } from "react-redux";
+import { IoIosWarning } from "react-icons/io";
 function Dashboard() {
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  if (!isLoggedIn) return <LudoLoader></LudoLoader>;
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const location = useLocation();
+
 
   // Close sidebar on route change
   useEffect(() => {
@@ -90,17 +96,17 @@ function Dashboard() {
             { name: "Friends", icon: "👥", path: "friends" },
             { name: "History", icon: "📜", path: "history" },
             { name: "Profile", icon: "👤", path: "profile" },
-            {name: "Logout", icon: <CiLogout/>, path: "logout"}
+            { name: "Logout", icon: <CiLogout />, path: "logout" },
+            { name: "Notice", icon: <IoIosWarning />, path: "notice" },
           ].map((item, index) => (
             <li key={index}>
               <NavLink
                 to={item.path}
                 className={({ isActive }) =>
                   `flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all duration-300
-                  ${
-                    isActive
-                      ? "bg-purple-600/30 border border-purple-400/40 text-white shadow-md shadow-purple-500/40"
-                      : "hover:bg-gray-800 text-gray-300"
+                  ${isActive
+                    ? "bg-purple-600/30 border border-purple-400/40 text-white shadow-md shadow-purple-500/40"
+                    : "hover:bg-gray-800 text-gray-300"
                   }`
                 }
               >
