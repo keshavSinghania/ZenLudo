@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axiosInstance from "../../api/axios.js"
 import dice1 from '../../assets/dicePng1.png';
 import dice2 from '../../assets/dicePng2.png';
-import Pawn1 from '../../assets/ludoToken1.png';
+import Pawn1 from '../../assets/LudoToken1.png';
 import Pawn2 from '../../assets/ludoToken2.png';
 
 const ForgotPassword = () => {
