@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import bgImage from "../src/assets/LudoBoard1.png";
-import Pawn from "./Pawn";
+import Pawn from "./Pawn.jsx";
 import {
   GLOBAL_PATH,
   ENTRY_POINT,
@@ -9,10 +9,17 @@ import {
   START_POSITIONS,
 } from "./PawnPaths.js";
 import { FaStar, FaArrowLeft, FaArrowRight, FaArrowDown, FaArrowUp } from "react-icons/fa";
+import { useLocation } from "react-router-dom";
 
-function LudoBoardBackground() {
+function PlayLocalBoard() {
+
+  const location = useLocation();
+  const [noOfPlayers, setNumberOfPlayer] = useState(2);
+  useEffect(() => {
+    setNumberOfPlayer(location.state?.numOfPlayers);
+  }, [])
   // --- STATE MANAGEMENT ---
-  const noOfPlayers = 2;
+  // const noOfPlayers = 2;
   const allPlayers = ["red", "green", "yellow", "blue"];
   const playersPlaying = allPlayers.slice(0, noOfPlayers);
 
@@ -515,10 +522,21 @@ function LudoBoardBackground() {
         )}
       </div>
 
-      {/* Error message */}
-      <div className="absolute z-100 top-5 left-1/2 transform -translate-x-1/2 bg-black/80 px-4 py-2 rounded shadow-lg">
-        <h2 className="text-red-500 text-lg font-bold text-center">{errMessage}</h2>
+      {/* Compact Error message */}
+      <div className="absolute z-50 top-4 left-1/2 -translate-x-1/2 
+                bg-gradient-to-r from-purple-900/90 to-indigo-900/90 
+                px-4 py-2 rounded-lg shadow-[0_0_10px_rgba(139,92,246,0.5)]
+                border border-purple-500/30 backdrop-blur-sm
+                flex flex-col items-center w-max max-w-xs">
+        <p className="text-purple-300 text-xs font-medium tracking-wide">
+          {noOfPlayers} Players Playing
+        </p>
+        <h2 className="text-pink-400 text-sm font-bold text-center">
+          {errMessage}
+        </h2>
       </div>
+
+
 
       {/* Dices */}
       <div className="dice-group">
@@ -587,4 +605,4 @@ function LudoBoardBackground() {
   );
 }
 
-export default LudoBoardBackground;
+export default PlayLocalBoard;

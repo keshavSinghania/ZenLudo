@@ -8,7 +8,7 @@ import Dashboard from "../pages/Dashboard/Dashboard.jsx";
 import PlayWithBots from "../pages/Dashboard/PlayWithBots.jsx";
 import CreateJoinRoom from "../pages/Dashboard/CreateJoinRoom.jsx";
 import PlayWithFriends from "../pages/Dashboard/PlayWithFriends.jsx"
-import LudoBoard from "../LudoBoardMain/LudoBoard.jsx";
+import PlayLocalBoard from "../LudoBoardMain/PlayLocalBoard.jsx";
 
 const Friends = () => <div className="text-white text-3xl">Friends</div>;
 const History = () => <div className="text-white text-3xl">History</div>;
@@ -70,8 +70,8 @@ export const router = createBrowserRouter([
     element: <LoginWithOtp />,
   },
   {
-    path: "/game",
-    element: <LudoBoard/>,
+    path: "/play/local",
+    element: <PlayLocalBoard/>,
   },
   {
     path: "*",

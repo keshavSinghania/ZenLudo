@@ -134,23 +134,6 @@
 }
 
 
-/* Custom shadow effects for hover states */
-.hover\:shadow-neon-red-hover:hover {
-  box-shadow: 0 0 15px 5px rgba(255, 0, 0, 0.7), 0 0 25px 10px rgba(255, 0, 0, 0.5);
-}
-
-.hover\:shadow-neon-green-hover:hover {
-  box-shadow: 0 0 15px 5px rgba(0, 255, 0, 0.7), 0 0 25px 10px rgba(0, 255, 0, 0.5);
-}
-
-.hover\:shadow-neon-blue-hover:hover {
-  box-shadow: 0 0 15px 5px rgba(0, 0, 255, 0.7), 0 0 25px 10px rgba(0, 0, 255, 0.5);
-}
-
-.hover\:shadow-neon-yellow-hover:hover {
-  box-shadow: 0 0 15px 5px rgba(255, 255, 0, 0.7), 0 0 25px 10px rgba(255, 255, 0, 0.5);
-}
-
 /* Base styles for the dice container */
 .dice-container {
   width: 85px;
@@ -231,3 +214,4 @@
 .dice-dots[data-value="6"] .dot:nth-child(6) {
   visibility: visible;
 }
+
