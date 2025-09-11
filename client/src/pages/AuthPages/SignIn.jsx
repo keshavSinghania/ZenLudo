@@ -24,13 +24,11 @@ const SignIn = () => {
   const [isLoginMode, setIsLoginMode] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Input change handler
   const dataChangeHandler = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  // Form submit handler
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     setResMessage("");
@@ -65,54 +63,37 @@ const SignIn = () => {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-purple-900 via-blue-900 to-pink-900 text-white flex items-center justify-center p-4">
-
-      {/* Background Elements */}
-      {/* <img src={dice2} alt="Ludo Dice" className="absolute md:top-20 md:left-10 w-70 h-70 transform -rotate-12 opacity-60 animate-float z-100 top-0 left-0" />
-      <img src={Pawn6} alt="Ludo Pawn" className="absolute top-10 right-20 w-60 h-60 transform rotate-45 opacity-70 animate-float-delay z-100 md:hidden lg:block" />
-      <img src={dice3} alt="Ludo Dice" className="absolute bottom-10 left-32 w-50 h-50 transform rotate-45 opacity-50 animate-float z-100" />
-      <img src={Pawn5} alt="Ludo Pawn" className="absolute left-130 top-5 w-56 h-56 transform -rotate-12 opacity-80 animate-float-delay z-100" />
-      <img src={dice4} alt="" className="absolute w-56 h-56 transform -rotate-12 opacity-80 animate-float-delay z-10" /> */}
       
-
       {/* Background Elements */}
-      <img
-        src={dice2}
-        alt="Ludo Dice"
-        className="absolute top-0 left-0 w-20 h-20 sm:w-40 sm:h-40 md:w-70 md:h-70 transform -rotate-12 opacity-60 animate-float z-100"
-      />
-
-      <img
-        src={Pawn6}
-        alt="Ludo Pawn"
-        className="absolute top-10 right-5 w-16 h-16 sm:w-32 sm:h-32 md:w-60 md:h-60 transform rotate-45 opacity-70 animate-float-delay z-100 md:hidden lg:block"
-      />
-
-      <img
-        src={dice3}
-        alt="Ludo Dice"
-        className="absolute bottom-10 left-10 w-14 h-14 sm:w-28 sm:h-28 md:w-50 md:h-50 transform rotate-45 opacity-50 animate-float z-100"
-      />
-
-      <img
-        src={Pawn5}
-        alt="Ludo Pawn"
-        className="absolute left-20 top-5 w-16 h-16 sm:w-32 sm:h-32 md:w-56 md:h-56 transform -rotate-12 opacity-80 animate-float-delay z-100"
-      />
-
-      <img
-        src={dice4}
-        alt="Dice"
-        className="absolute bottom-0 right-0 w-20 h-20 sm:w-32 sm:h-32 md:w-56 md:h-56 transform -rotate-12 opacity-80 animate-float-delay z-10"
-      />
-
+      <img src={dice2} alt="Ludo Dice" className="absolute top-0 left-0 w-20 h-20 sm:w-40 sm:h-40 md:w-70 md:h-70 transform -rotate-12 opacity-60 animate-float z-100" />
+      <img src={Pawn6} alt="Ludo Pawn" className="absolute top-10 right-5 w-16 h-16 sm:w-32 sm:h-32 md:w-60 md:h-60 transform rotate-45 opacity-70 animate-float-delay z-100 md:hidden lg:block" />
+      <img src={dice3} alt="Ludo Dice" className="absolute bottom-10 left-10 w-14 h-14 sm:w-28 sm:h-28 md:w-50 md:h-50 transform rotate-45 opacity-50 animate-float z-100" />
+      <img src={Pawn5} alt="Ludo Pawn" className="absolute left-20 top-5 w-16 h-16 sm:w-32 sm:h-32 md:w-56 md:h-56 transform -rotate-12 opacity-80 animate-float-delay z-100" />
+      <img src={dice4} alt="Dice" className="absolute bottom-0 right-0 w-20 h-20 sm:w-32 sm:h-32 md:w-56 md:h-56 transform -rotate-12 opacity-80 animate-float-delay z-10" />
 
       {/* Main Card */}
       <div className="relative z-10 p-8 rounded-3xl bg-gray-900 bg-opacity-40 backdrop-filter backdrop-blur-lg shadow-2xl w-full max-w-sm border-2 border-purple-500 border-opacity-30 transition-all duration-500 hover:shadow-lg-glow">
-        <h1 className="text-4xl font-extrabold text-center mb-8 tracking-wide animate-pulse-slow">
+        <h1 className="text-4xl font-extrabold text-center mb-6 tracking-wide animate-pulse-slow">
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400">
             ZenLudo
           </span>
         </h1>
+
+        {/* Middle Buttons for Login / Sign Up */}
+        <div className="flex justify-center mb-6">
+          <button
+            onClick={() => setIsLoginMode(true)}
+            className={`px-6 py-2 rounded-l-full font-semibold transition duration-300 ${isLoginMode ? "bg-purple-600 text-white" : "bg-gray-700 text-gray-300 hover:bg-purple-500"}`}
+          >
+            Login
+          </button>
+          <button
+            onClick={() => setIsLoginMode(false)}
+            className={`px-6 py-2 rounded-r-full font-semibold transition duration-300 ${!isLoginMode ? "bg-cyan-600 text-white" : "bg-gray-700 text-gray-300 hover:bg-cyan-500"}`}
+          >
+            Sign Up
+          </button>
+        </div>
 
         <form className="space-y-6" onSubmit={handleFormSubmit}>
           <input
@@ -134,7 +115,7 @@ const SignIn = () => {
               className="w-full px-4 py-3 bg-gray-700 bg-opacity-60 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 transition duration-300 placeholder-gray-400 text-white neon-border-box"
             />
             <div className="absolute inset-y-0 right-4 flex items-center cursor-pointer text-gray-400 hover:text-cyan-400 transition-colors"
-              onClick={() => setShowPassword(!showPassword)}>
+                 onClick={() => setShowPassword(!showPassword)}>
               {showPassword ? <IoEyeOff size={22} /> : <IoEye size={22} />}
             </div>
           </div>
@@ -175,15 +156,6 @@ const SignIn = () => {
               Login with OTP
             </span>
           </div>
-        </div>
-
-        <div className="mt-4 flex justify-between">
-          <button type="button" onClick={() => setIsLoginMode(true)} className="text-sm text-gray-400 hover:text-purple-400">
-            Login Mode
-          </button>
-          <button type="button" onClick={() => setIsLoginMode(false)} className="text-sm text-gray-400 hover:text-cyan-400">
-            Sign Up Mode
-          </button>
         </div>
       </div>
     </div>
