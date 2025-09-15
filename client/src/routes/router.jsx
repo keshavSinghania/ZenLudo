@@ -21,9 +21,9 @@ import PlayLocalBoard from "../LudoBoardMain/PlayLocalBoard";
 import ProtectedRoutes from "./ProtectedRoutes";
 import PublicRoutes from "./PublicRoutes";
 import Notice from "../pages/Dashboard/Notice";
+import Friends from "../pages/Dashboard/Friends";
 
 
-const Friends = () => <div className="text-white text-3xl">Friends</div>;
 const History = () => <div className="text-white text-3xl">History</div>;
 const Profile = () => <div className="text-white text-3xl">Profile</div>;
 

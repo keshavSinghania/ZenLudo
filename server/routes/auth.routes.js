@@ -1,5 +1,5 @@
 import express from "express"
-import { forgotPasswordController, loginUserController, otpVerificationController, registerUserController, resetPasswordController, sendOtpController } from "../controller/user.controller.js";
+import { checkUsernameAvailability, forgotPasswordController, loginUserController, otpVerificationController, registerUserController, resetPasswordController, sendOtpController } from "../controller/user.controller.js";
 import authVerifyMiddleware from "../middlewares/authVerifyMiddleware.js";
 export const authRouter = express.Router();
 
@@ -9,6 +9,7 @@ authRouter.post("/send-otp", sendOtpController);
 authRouter.post("/otp-verification", otpVerificationController);
 authRouter.post("/forgot-password", forgotPasswordController);
 authRouter.put("/reset-password", resetPasswordController);
+authRouter.post('/check-username-availability', checkUsernameAvailability);
 
 
 authRouter.get("/verify-auth", authVerifyMiddleware, (req, res) => {

@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import sendOtpMail from "../utils/sendOtpMail.js";
 import crypto from "crypto";
 import sendResetPasswordMail from "../utils/sendResetPasswordMail.js";
+import { error } from "console";
 
 // Generate JWT Token
 const generateToken = (user) =>
@@ -16,26 +17,40 @@ const generateToken = (user) =>
 // REGISTER 
 export const registerUserController = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    let { email, password, username } = req.body;
 
-    if (!email || !password) {
-      const error = new Error("Email and password required!");
+    username = username.trim().replace(/\s+/g, " ");
+
+    if (!email || !password || !username) {
+      const error = new Error("Email , password, and username required!");
       error.statusCode = 400;
       return next(error);
     }
 
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      const error = new Error("Email already exists!");
+    const existingUser = await User.findOne({ 
+      $or: [{email},{username}]
+    });
+
+    if(existingUser){
+      let errorMessage;
+      if(existingUser.email === email){
+        errorMessage = "Email already exists!";
+      }else if(existingUser.username == username){
+        errorMessage = "Username already exists!";
+      }
+
+      const error = new Error(errorMessage);
       error.statusCode = 409;
       return next(error);
     }
+    
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({
       name: "new_user",
       email,
+      username,
       password: hashedPassword,
       verified: false,
     });
@@ -262,5 +277,49 @@ export const resetPasswordController = async (req, res, next) => {
     });
   } catch (err) {
     next(err);
+  }
+};
+
+
+// CHECKING IF USERNAME AVAILABLE
+export const checkUsernameAvailability = async (req, res, next) => {
+  try {
+    let { username } = req.body;
+    username = username.trim().replace(/\s+/g, " ");
+    if (!username) {
+      return res.status(400).json({
+        message: "Username is required",
+        success: false,
+        error: true,
+      });
+    }
+
+    if (username.length < 5) {
+      return res.status(400).json({
+        message: "Username must be at least 5 characters long!",
+        success: false,
+        error: true,
+      });
+    }
+
+    const existingUser = await User.findOne({ username });
+
+    if (existingUser) {
+      return res.status(409).json({
+        message: "Username already taken, please choose another.",
+        available: false,
+        success: false,
+        error: true,
+      });
+    }
+
+    return res.status(200).json({
+      message: "Username is available",
+      available: true,
+      success: true,
+      error: false,
+    });
+  } catch (error) {
+    next(error);
   }
 };

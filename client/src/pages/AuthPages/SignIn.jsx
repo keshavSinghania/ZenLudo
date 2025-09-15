@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FcGoogle } from 'react-icons/fc';
 import { BsFingerprint } from 'react-icons/bs';
 import { IoEye, IoEyeOff } from "react-icons/io5";
@@ -20,15 +20,53 @@ const SignIn = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [resMessage, setResMessage] = useState("");
-  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [formData, setFormData] = useState({ email: "", password: "", username: "" });
   const [isLoginMode, setIsLoginMode] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [usernameInputMessage, setUsernameInputMessage] = useState("");
 
+  //function to handle api call to check availibilty of username after 0.5 sec of user stops typing
+  useEffect(() => {
+    setUsernameInputMessage("");
+    if (!formData.username.length) return;
+    const timer = setTimeout(async () => {
+      //api call to check username availibility using try and catch
+      try {
+        const response = await axiosInstance.post(
+          '/auth/check-username-availability',
+          { username: formData.username }
+        );
+
+        if (response?.data?.success) {
+          setUsernameInputMessage(" Username available");
+        } else {
+          setUsernameInputMessage(response?.data?.message || "❌ Username not available");
+        }
+
+      } catch (error) {
+        if (error.response) {
+          setUsernameInputMessage(error.response.data?.message || "Server error");
+        } else if (error.request) {
+          setUsernameInputMessage(" Network error: Please check your internet connection.");
+        } else {
+          setUsernameInputMessage(error.message || "Unexpected error occurred");
+        }
+      }
+
+    }, 500)
+    return () => {
+      setUsernameInputMessage("");
+      clearTimeout(timer)
+    }
+  }, [formData.username]);
+
+  //function to store new data into form data when ever user change data
   const dataChangeHandler = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  //function to submit form data for both signup and as well for login
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     setResMessage("");
@@ -63,7 +101,7 @@ const SignIn = () => {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-purple-900 via-blue-900 to-pink-900 text-white flex items-center justify-center p-4">
-      
+
       {/* Background Elements */}
       <img src={dice2} alt="Ludo Dice" className="absolute top-0 left-0 w-20 h-20 sm:w-40 sm:h-40 md:w-70 md:h-70 transform -rotate-12 opacity-60 animate-float z-100" />
       <img src={Pawn6} alt="Ludo Pawn" className="absolute top-10 right-5 w-16 h-16 sm:w-32 sm:h-32 md:w-60 md:h-60 transform rotate-45 opacity-70 animate-float-delay z-100 md:hidden lg:block" />
@@ -96,6 +134,25 @@ const SignIn = () => {
         </div>
 
         <form className="space-y-6" onSubmit={handleFormSubmit}>
+          {!isLoginMode ? (<div>
+            <p className='text-green-500 p-1'>
+              {usernameInputMessage ? usernameInputMessage : ""}
+            </p>
+            <input
+              type="username"
+              name="username"
+              value={formData.username}
+              onChange={dataChangeHandler}
+              placeholder="Username"
+              onKeyDown={(e) => {
+                if (e.key === " ") {
+                  e.preventDefault();
+                }
+              }}
+              className="w-full px-4 py-3 bg-gray-700 bg-opacity-60 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 transition duration-300 placeholder-gray-400 text-white neon-border-box"
+            />
+          </div>):""}
+          
           <input
             type="email"
             name="email"
@@ -115,7 +172,7 @@ const SignIn = () => {
               className="w-full px-4 py-3 bg-gray-700 bg-opacity-60 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 transition duration-300 placeholder-gray-400 text-white neon-border-box"
             />
             <div className="absolute inset-y-0 right-4 flex items-center cursor-pointer text-gray-400 hover:text-cyan-400 transition-colors"
-                 onClick={() => setShowPassword(!showPassword)}>
+              onClick={() => setShowPassword(!showPassword)}>
               {showPassword ? <IoEyeOff size={22} /> : <IoEye size={22} />}
             </div>
           </div>
