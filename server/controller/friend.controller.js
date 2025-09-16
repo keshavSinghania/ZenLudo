@@ -106,7 +106,7 @@ export const fetchFriendRequestsController = async (req, res, next) => {
 
         const user = await User.findById(userId)
             .select("-password -email -otp")
-            .populate("friendRequests", "username profilePic");
+            .populate("friendRequests", "_id name username profilePic");
 
         if (!user) {
             const error = new Error("User not found");

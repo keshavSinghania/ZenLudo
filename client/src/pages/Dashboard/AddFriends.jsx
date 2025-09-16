@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import diceBg from "../../assets/LudoBoard1.png";
 import defaultAvatar from "../../assets/default-avatar-zenludo.png";
 import axiosInstance from "../../api/axios";
+import { useEffect } from "react";
 
 const AddFriends = () => {
         // Floating particles
@@ -72,16 +73,15 @@ const AddFriends = () => {
                         setErrorMessage("");
 
                         //api call to send friend request
-                        const response = await axiosInstance.post("/friend/send-friend-request",{
+                        const response = await axiosInstance.post("/friend/send-friend-request", {
                                 friendId: friendId
                         });
-                        console.log(response);
-                        if(response?.data?.success){
+                        if (response?.data?.success) {
                                 setErrorMessage(response?.data?.message);
                                 setFriendInformation(null);
-                        }else{
-                                setErrorMessage(response?.data?.message || "Something went wrong");
-                                setFriendInformation(null); 
+                        } else {
+                                setErrorMessage(response?.data?.message || "Something went wrong while searching ");
+                                setFriendInformation(null);
                         }
                 } catch (error) {
                         if (error.code === "ERR_NETWORK") {
@@ -95,12 +95,36 @@ const AddFriends = () => {
                         setSendFriendRequestLoading(false);
                 }
         }
-        // DUMMY FRIEND REQUESTS
-        const dummyFriendRequests = [
-                { _id: "1", name: "KESHAV", username: "keshav123", profilePic: defaultAvatar },
-                { _id: "2", name: "singhania", username: "k56", profilePic: defaultAvatar },
-                { _id: "3", name: "keshavvvvvvvvvv", username: "singhania789", profilePic: defaultAvatar },
-        ];
+
+        //HANDLE ALL THE RECEIVED FRIEND REQUEST 
+
+        const [friendRequests, setFriendRequests] = useState([]);
+        const [fetchFriendRequestsMessage, setFetchFriendRequestsMessage] = useState("");
+        //function to fetch all the friend request 
+        const fetchAllFriendRequest = async () => {
+                try {
+                        const response = await axiosInstance.get("/friend/fetch-friend-requests");
+                        if (response.data.success) {
+                                setFetchFriendRequestsMessage("");
+                                setFriendRequests(response?.data?.friendRequests)
+                        } else {
+                                setFetchFriendRequestsMessage(response?.data?.message || "Something went wrogm while fetching your all friend requests")
+                        }
+                } catch (error) {
+                        if (error.code === "ERR_NETWORK") {
+                                setErrorMessage("Network error: Check your internet connection.");
+                        } else if (error.response) {
+                                setErrorMessage(error.response.data?.message || "Server error occurred");
+                        } else {
+                                setErrorMessage(error.message || "Unexpected error occurred");
+                        }
+                } finally {
+                }
+        }
+
+        useEffect(()=>{
+                fetchAllFriendRequest();
+        },[])
 
         return (
                 <div className="relative w-full h-full bg-gray-950 text-white">
@@ -197,26 +221,26 @@ const AddFriends = () => {
 
                                                                         <div className="mt-4 flex justify-end">
                                                                                 <button
-                                                                                        disabled = {sendFriendRequestLoading}
+                                                                                        disabled={sendFriendRequestLoading}
                                                                                         onClick={() => { sendFriendRequest(friendInformation._id) }}
                                                                                         className={`cursor-pointer px-5 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 ${setSendFriendRequestLoading ? "from-cyan-300 to-blue-300" : "from-cyan-500 to-blue-500"}  rounded-full hover:scale-105 transition shadow-md font-semibold text-sm`}>
-                                                                                        {sendFriendRequestLoading? "Sending request...": "Send request"}
+                                                                                        {sendFriendRequestLoading ? "Sending request..." : "Send request"}
                                                                                 </button>
                                                                         </div>
                                                                 </div>
                                                         </div>
                                                 )}
                                         </div>
-                                        {/* ------------------- FRIEND REQUESTS ------------------- */}
+                                        {/*FRIEND REQUESTS */}
                                         <div className="w-full max-w-2xl">
                                                 <h2 className="text-2xl font-bold mb-4 text-white">Friend Requests</h2>
-                                                {dummyFriendRequests.map((req) => (
+                                                {friendRequests.map((req) => (
                                                         <div
                                                                 key={req._id}
                                                                 className="p-4 mb-3 bg-gray-900 bg-opacity-80 rounded-xl border border-purple-600 flex items-center justify-between transition hover:scale-105"
                                                         >
                                                                 <div className="flex items-center gap-4">
-                                                                        <img src={req.profilePic} className="w-14 h-14 rounded-full border-2 border-purple-500" />
+                                                                        <img src={req.profilePic || defaultAvatar} className="w-14 h-14 rounded-full border-2 border-purple-500" />
                                                                         <div>
                                                                                 <h3 className="text-lg font-semibold">{req.name}</h3>
                                                                                 <p className="text-gray-400">@{req.username}</p>
@@ -232,7 +256,14 @@ const AddFriends = () => {
                                                                 </div>
                                                         </div>
                                                 ))}
-                                                {dummyFriendRequests.length === 0 && <p className="text-gray-400">No pending requests</p>}
+                                                {
+                                                        friendRequests.length > 0
+                                                                ? null
+                                                                : <p className="text-gray-400">No friend request found</p>
+                                                }
+                                                {
+                                                        <p className="text-gray-400">{fetchFriendRequestsMessage}</p>
+                                                }
                                         </div>
                                 </div>
                         </div>
