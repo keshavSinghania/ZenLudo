@@ -6,9 +6,9 @@ const userSchema = new mongoose.Schema({
         required: true,
     },
     username: {
-        type:String,
-        required : true,
-        unique : true,
+        type: String,
+        required: true,
+        unique: true,
     },
     email: {
         type: String,
@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: function() { return !this.googleId;}
+        required: function () { return !this.googleId; }
     },
     googleId: {
         type: String,
@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema({
     otpExpires: {
         type: Date,
     },
-    lastLogin:{
+    lastLogin: {
         type: Date,
     },
     friendIds: [{
@@ -44,7 +44,7 @@ const userSchema = new mongoose.Schema({
         ref: "User",
     }],
     friendRequests: [{
-        from: {type: mongoose.Schema.Types.ObjectId, ref: "User"},
+        type: mongoose.Schema.Types.ObjectId, ref: "User"
     }],
     gamesPlayed: {
         type: Number,
@@ -88,7 +88,7 @@ const userSchema = new mongoose.Schema({
     },
     resetPasswordTokenExpires: {
         type: Date,
-        default:null,
+        default: null,
     }
 
     //notification ans voice chat later on

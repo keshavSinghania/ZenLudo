@@ -16,8 +16,8 @@ authRouter.get("/verify-auth", authVerifyMiddleware, (req, res) => {
     res.json({
         message: "User is authenticated",
         user: {
-            id: req.user._id,
-            email: req.user.email,
+            id: req.userId,
+            // email: req.user.email,
         },
     });
 });

@@ -29,7 +29,7 @@ const authVerifyMiddleware = async (req, res, next) => {
     }
 
     // Attach user to request and continue
-    req.user = user;
+    req.userId = user._id;
     next();
   } catch (error) {
     // Handle token expiration or other errors

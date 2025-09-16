@@ -21,7 +21,7 @@ import PlayLocalBoard from "../LudoBoardMain/PlayLocalBoard";
 import ProtectedRoutes from "./ProtectedRoutes";
 import PublicRoutes from "./PublicRoutes";
 import Notice from "../pages/Dashboard/Notice";
-import Friends from "../pages/Dashboard/Friends";
+import AddFriends from "../pages/Dashboard/AddFriends";
 
 
 const History = () => <div className="text-white text-3xl">History</div>;
@@ -57,8 +57,8 @@ export const router = createBrowserRouter([
         element: <ProtectedRoutes><CreateJoinRoom /></ProtectedRoutes>,
       },
       {
-        path: "friends",
-        element: <ProtectedRoutes><Friends /></ProtectedRoutes>
+        path: "add-friends",
+        element: <ProtectedRoutes><AddFriends></AddFriends></ProtectedRoutes>
       },
       {
         path: "history",

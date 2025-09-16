@@ -1,39 +1,301 @@
 import User from "../models/user.schema.js";
 
-
-//controller to search friend using username 
-export const searchFriendController = async(req, res, next) => {
+//Search Friend
+export const searchFriendController = async (req, res, next) => {
     try {
-        const {friendUsername } = req.body;
-        if(!friendUsername){
-            const error = new Error("friend username must required");
+        const { friendUsername } = req.body;
+        if (!friendUsername) {
+            const error = new Error("Friend username is required");
             error.statusCode = 400;
             return next(error);
         }
 
-        const friend = await User.findOne({username:  friendUsername}).select('-password -email -googleId -otp ');
-        if(!friend){
+        const friend = await User.findOne({ username: friendUsername }).select(
+            "-password -email -otp"
+        );
+
+        if (!friend) {
             const error = new Error("No user with this username exists!");
             error.statusCode = 404;
             return next(error);
-        };
+        }
 
         const friendInformation = {
+            _id: friend._id,
             name: friend.name,
-            username : friend.username,
-            profilePic : friend.profilePic,
-            gamesPlayed : friend.gamesPlayed,
-            gamesWon : friend.gamesWon,
-            firstPlaceWins : friend.firstPlaceWins,
-            recentGames : friend.recentGames,
-        }
+            username: friend.username,
+            profilePic: friend.profilePic,
+            gamesPlayed: friend.gamesPlayed,
+            gamesWon: friend.gamesWon,
+            firstPlaceWins: friend.firstPlaceWins,
+            recentGames: friend.recentGames,
+        };
+
         return res.status(200).json({
             message: "User found successfully",
-            success : true,
+            success: true,
             error: false,
-            friendInformation
-        })
+            friendInformation,
+        });
     } catch (error) {
         next(error);
     }
-}
+};
+
+//Send Friend Request
+export const sendFriendController = async (req, res, next) => {
+    try {
+        const { friendId } = req.body; // Use _id here
+        const userId = req.userId;
+
+        if (!userId || !friendId) {
+            const error = new Error("Invalid request");
+            error.statusCode = 400;
+            return next(error);
+        }
+
+        if (userId === friendId) {
+            const error = new Error("Cannot send request to yourself");
+            error.statusCode = 400;
+            return next(error);
+        }
+
+        const user = await User.findById(userId);
+        const friend = await User.findById(friendId);
+
+        if (!user || !friend) {
+            const error = new Error("User not found");
+            error.statusCode = 404;
+            return next(error);
+        }
+
+        if (user.friendIds.includes(friend._id)) {
+            const error = new Error("Already friends");
+            error.statusCode = 409;
+            return next(error);
+        }
+
+        if (friend.friendRequests.includes(user._id)) {
+            const error = new Error("Friend request already sent");
+            error.statusCode = 409;
+            return next(error);
+        }
+
+        friend.friendRequests.push(user._id);
+        await friend.save();
+
+        return res.status(200).json({
+            message: "Friend request sent successfully",
+            success: true,
+            error: false,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+//Fetch Friend Requests
+export const fetchFriendRequestsController = async (req, res, next) => {
+    try {
+        const userId = req.userId;
+        if (!userId) {
+            const error = new Error("Auth error. Please login again.");
+            error.statusCode = 401;
+            return next(error);
+        }
+
+        const user = await User.findById(userId)
+            .select("-password -email -otp")
+            .populate("friendRequests", "username profilePic");
+
+        if (!user) {
+            const error = new Error("User not found");
+            error.statusCode = 404;
+            return next(error);
+        }
+
+        return res.status(200).json({
+            message: "Successfully fetched all friend requests",
+            error: false,
+            success: true,
+            friendRequests: user.friendRequests,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+//Fetch Friends
+export const fetchFriendsController = async (req, res, next) => {
+    try {
+        const userId = req.userId;
+
+        if (!userId) {
+            const error = new Error("Auth error! Please login first");
+            error.statusCode = 401;
+            return next(error);
+        }
+
+        const user = await User.findById(userId)
+            .select("-password -otp -email")
+            .populate(
+                "friendIds",
+                "username name profilePic gamesPlayed gamesWon firstPlaceWins recentGames"
+            );
+
+        if (!user) {
+            const error = new Error("No such user found. Please register first");
+            error.statusCode = 404;
+            return next(error);
+        }
+
+        return res.status(200).json({
+            message: "Successfully fetched all friends",
+            success: true,
+            error: false,
+            data: user.friendIds,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+//Accept Friend Request
+export const acceptFriendRequestController = async (req, res, next) => {
+    try {
+        const { friendId } = req.body;
+        const userId = req.userId;
+
+        if (!friendId) {
+            const error = new Error("Friend ID is required");
+            error.statusCode = 400;
+            return next(error);
+        }
+
+        const user = await User.findById(userId).select("friendIds friendRequests");
+        const friend = await User.findById(friendId).select("friendIds");
+
+        if (!user || !friend) {
+            const error = new Error("User not found");
+            error.statusCode = 404;
+            return next(error);
+        }
+
+        if (!user.friendRequests.includes(friend._id)) {
+            const error = new Error("No pending friend request from this user");
+            error.statusCode = 400;
+            return next(error);
+        }
+
+        if (user.friendIds.includes(friend._id)) {
+            const error = new Error("Already friends");
+            error.statusCode = 409;
+            return next(error);
+        }
+
+        user.friendIds.push(friend._id);
+        friend.friendIds.push(user._id);
+
+        // Remove friend request
+        user.friendRequests = user.friendRequests.filter(
+            id => id.toString() !== friend._id.toString()
+        );
+
+        await user.save();
+        await friend.save();
+
+        return res.status(200).json({
+            message: "Friend request accepted successfully",
+            success: true,
+            error: false,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+//Reject Friend Request
+export const rejectFriendRequestController = async (req, res, next) => {
+    try {
+        const { friendId } = req.body;
+        const userId = req.userId;
+
+        if (!friendId) {
+            const error = new Error("Friend ID is required");
+            error.statusCode = 400;
+            return next(error);
+        }
+
+        const user = await User.findById(userId).select("friendRequests");
+        if (!user) {
+            const error = new Error("User not found");
+            error.statusCode = 404;
+            return next(error);
+        }
+
+        if (!user.friendRequests.includes(friendId)) {
+            const error = new Error("No pending friend request from this user");
+            error.statusCode = 400;
+            return next(error);
+        }
+
+        // Remove friend request
+        user.friendRequests = user.friendRequests.filter(
+            id => id.toString() !== friendId.toString()
+        );
+        await user.save();
+
+        return res.status(200).json({
+            message: "Friend request rejected successfully",
+            success: true,
+            error: false,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+//Remove Friend
+export const removeFriendController = async (req, res, next) => {
+    try {
+        const { friendId } = req.body;
+        const userId = req.userId;
+
+        if (!friendId) {
+            const error = new Error("Friend ID is required");
+            error.statusCode = 400;
+            return next(error);
+        }
+
+        const user = await User.findById(userId).select("friendIds");
+        const friend = await User.findById(friendId).select("friendIds");
+
+        if (!user || !friend) {
+            const error = new Error("User not found");
+            error.statusCode = 404;
+            return next(error);
+        }
+
+        // Check if they are actually friends
+        if (!user.friendIds.includes(friend._id)) {
+            const error = new Error("You are not friends with this user");
+            error.statusCode = 400;
+            return next(error);
+        }
+
+        // Remove friend from both sides
+        user.friendIds = user.friendIds.filter(id => id.toString() !== friend._id.toString());
+        friend.friendIds = friend.friendIds.filter(id => id.toString() !== user._id.toString());
+
+        await user.save();
+        await friend.save();
+
+        return res.status(200).json({
+            message: "Friend removed successfully",
+            success: true,
+            error: false,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
