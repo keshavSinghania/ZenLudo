@@ -43,9 +43,9 @@ export const searchFriendController = async (req, res, next) => {
 };
 
 //Send Friend Request
-export const sendFriendController = async (req, res, next) => {
+export const sendFriendRequestController = async (req, res, next) => {
     try {
-        const { friendId } = req.body; // Use _id here
+        const { friendId } = req.body;
         const userId = req.userId;
 
         if (!userId || !friendId) {
