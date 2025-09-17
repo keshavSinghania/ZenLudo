@@ -93,6 +93,7 @@ function Dashboard() {
             { name: "Play with Bots", icon: "🤖", path: "play-with-bots" },
             { name: "Play with Friends", icon: "🤝", path: "play-with-friends" },
             { name: "Create or Join Room", icon: "➕", path: "create-join-room" },
+            { name: "Friends", icon: "👥", path: "friends" },
             { name: "Add Friends", icon: "👥", path: "add-friends" },
             { name: "History", icon: "📜", path: "history" },
             { name: "Profile", icon: "👤", path: "profile" },

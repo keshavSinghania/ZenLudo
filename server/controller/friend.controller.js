@@ -1,9 +1,18 @@
 import User from "../models/user.schema.js";
 
-//Search Friend
+// Search Friend
 export const searchFriendController = async (req, res, next) => {
     try {
         const { friendUsername } = req.body;
+        const userId = req.userId;
+
+        // Fix: Check if user is logged in
+        if (!userId) {
+            const error = new Error("Auth required, Please login again");
+            error.statusCode = 402;
+            return next(error);
+        }
+
         if (!friendUsername) {
             const error = new Error("Friend username is required");
             error.statusCode = 400;
@@ -20,15 +29,21 @@ export const searchFriendController = async (req, res, next) => {
             return next(error);
         }
 
+        if (friend._id.toString() === userId.toString()) {
+            const error = new Error("You can't search your own account");
+            error.statusCode = 402;
+            return next(error);
+        }
+
         const friendInformation = {
-            _id: friend._id,
-            name: friend.name,
-            username: friend.username,
-            profilePic: friend.profilePic,
-            gamesPlayed: friend.gamesPlayed,
-            gamesWon: friend.gamesWon,
-            firstPlaceWins: friend.firstPlaceWins,
-            recentGames: friend.recentGames,
+            _id: friend._id || "NaN",
+            name: friend.name || "NaN",
+            username: friend.username || "NaN",
+            profilePic: friend.profilePic || "NaN",
+            gamesPlayed: friend.gamesPlayed ?? 0,
+            gamesWon: friend.gamesWon ?? 0,
+            firstPlaceWins: friend.firstPlaceWins ?? 0,
+            recentGames: Array.isArray(friend.recentGames) ? friend.recentGames : [],
         };
 
         return res.status(200).json({
@@ -148,7 +163,6 @@ export const fetchFriendsController = async (req, res, next) => {
             error.statusCode = 404;
             return next(error);
         }
-
         return res.status(200).json({
             message: "Successfully fetched all friends",
             success: true,

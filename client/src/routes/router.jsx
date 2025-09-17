@@ -22,6 +22,7 @@ import ProtectedRoutes from "./ProtectedRoutes";
 import PublicRoutes from "./PublicRoutes";
 import Notice from "../pages/Dashboard/Notice";
 import AddFriends from "../pages/Dashboard/AddFriends";
+import Friends from "../pages/Dashboard/Friends";
 
 
 const History = () => <div className="text-white text-3xl">History</div>;
@@ -55,6 +56,10 @@ export const router = createBrowserRouter([
       {
         path: "create-join-room",
         element: <ProtectedRoutes><CreateJoinRoom /></ProtectedRoutes>,
+      },
+      {
+        path: "friends",
+        element: <ProtectedRoutes><Friends/></ProtectedRoutes>
       },
       {
         path: "add-friends",
