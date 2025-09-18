@@ -154,8 +154,8 @@ export const fetchFriendsController = async (req, res, next) => {
         const user = await User.findById(userId)
             .select("-password -otp -email")
             .populate(
-                "friendIds",
-                "username name profilePic gamesPlayed gamesWon firstPlaceWins recentGames"
+                "friendIds" ,
+                "profilePic username name profilePic gamesPlayed gamesWon firstPlaceWins recentGames"
             );
 
         if (!user) {
@@ -313,3 +313,4 @@ export const removeFriendController = async (req, res, next) => {
         next(error);
     }
 };
+

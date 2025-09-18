@@ -323,3 +323,36 @@ export const checkUsernameAvailability = async (req, res, next) => {
     next(error);
   }
 };
+
+// FETCH USER PROFILE
+export const fetchUserProfileController = async (req, res, next) => {
+  try {
+    const userId = req.userId;
+
+    if (!userId) {
+      const error = new Error("Auth required! Please login again");
+      error.statusCode = 401;
+      return next(error);
+    }
+
+    // Safer: whitelist fields you actually need
+    const user = await User.findById(userId).select(
+      "name username profilePic gamesPlayed gamesWon firstPlaceWins recentGames createdAt updatedAt"
+    );
+
+    if (!user) {
+      const error = new Error("Account not found! Something went wrong");
+      error.statusCode = 404;
+      return next(error);
+    }
+
+    return res.status(200).json({
+      message: "Profile details successfully fetched",
+      error: false,
+      success: true,
+      data: user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

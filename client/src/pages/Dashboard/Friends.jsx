@@ -6,33 +6,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 
 const Friends = () => {
-  // Dummy friends list
-  const friends = [
-    {
-      _id: "1",
-      name: "Keshav Singhania",
-      username: "keshav123",
-      profilePic: defaultAvatar,
-      isOnline: true,
-      lastActive: "Now",
-    },
-    {
-      _id: "2",
-      name: "jnjh",
-      username: "jjj_gg",
-      profilePic: defaultAvatar,
-      isOnline: false,
-      lastActive: "2 hours ago",
-    },
-    {
-      _id: "3",
-      name: "a",
-      username: "_s",
-      profilePic: defaultAvatar,
-      isOnline: false,
-      lastActive: "Yesterday",
-    },
-  ];
+  
 
   // Floating particles
   const particles = Array.from({ length: 20 }, (_, i) => {
@@ -57,7 +31,7 @@ const Friends = () => {
 
   const [fetchFriendLoading , setFetchFriendLoading] = useState(false);
   const [notification, setNotification] = useState("");
-  const [allFriends , setAllFriends] = useState([]);
+  const [friends , setFriends] = useState([]);
 
   //function to fetch all the friends 
   useEffect(()=>{
@@ -71,6 +45,8 @@ const Friends = () => {
         if(response?.data?.success){
             setNotification(response?.data?.message);
             console.log(response?.data?.data);
+            setFriends(response?.data?.data);
+            // profilePic username name gamesPlayed gamesWon firstPlaceWins recentGames (this information receiving from db)
         }
     } catch (error) {
          if (error.code === "ERR_NETWORK") {
@@ -101,7 +77,7 @@ const Friends = () => {
       <div className="relative z-10 w-full h-full overflow-y-auto py-10 px-4">
         <div className="flex flex-col items-center space-y-10">
           {/* Title */}
-          <h1 className="text-4xl font-extrabold text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 animate-pulse-slow">
+          <h1 className="text-4xl p-2 font-extrabold text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 animate-pulse-slow">
             My Friends
           </h1>
 
@@ -124,11 +100,11 @@ const Friends = () => {
                     <p className="text-gray-400 text-sm">@{friend.username || "N/A"}</p>
 
                     {/* Status */}
-                    {friend.isOnline ? (
+                    {friend?.isOnline ? (
                       <p className="text-green-400 text-xs font-medium">🟢 Online</p>
                     ) : (
                       <p className="text-gray-400 text-xs">
-                        Last active: {friend.lastActive || "Unknown"}
+                        Last active: {friend?.lastActive || "Recently"}
                       </p>
                     )}
                   </div>

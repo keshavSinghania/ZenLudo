@@ -23,10 +23,10 @@ import PublicRoutes from "./PublicRoutes";
 import Notice from "../pages/Dashboard/Notice";
 import AddFriends from "../pages/Dashboard/AddFriends";
 import Friends from "../pages/Dashboard/Friends";
+import ProfilePage from "../pages/Dashboard/Profile";
 
 
 const History = () => <div className="text-white text-3xl">History</div>;
-const Profile = () => <div className="text-white text-3xl">Profile</div>;
 
 export const router = createBrowserRouter([
   {
@@ -43,7 +43,7 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <ProtectedRoutes><Notice/></ProtectedRoutes>,
+        element: <ProtectedRoutes><ProfilePage/></ProtectedRoutes>,
       },
       {
         path: "play-with-bots",
@@ -71,7 +71,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "profile",
-        element: <ProtectedRoutes><Profile /></ProtectedRoutes>,
+        element: <ProtectedRoutes><ProfilePage/></ProtectedRoutes>,
       },
       {
         path: "notice",
