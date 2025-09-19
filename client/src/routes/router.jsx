@@ -24,6 +24,7 @@ import Notice from "../pages/Dashboard/Notice";
 import AddFriends from "../pages/Dashboard/AddFriends";
 import Friends from "../pages/Dashboard/Friends";
 import ProfilePage from "../pages/Dashboard/Profile";
+import Chat from "../pages/Chat/Chat";
 
 
 const History = () => <div className="text-white text-3xl">History</div>;
@@ -35,7 +36,11 @@ export const router = createBrowserRouter([
   },
   {
     path: "/otp-verification",
-    element: <PublicRoutes><OtpVerification /></PublicRoutes> ,
+    element: <PublicRoutes><OtpVerification /></PublicRoutes>,
+  },
+  {
+    path: "/chat",
+    element: <ProtectedRoutes><Chat/></ProtectedRoutes>,
   },
   {
     path: "/dashboard",
@@ -43,7 +48,7 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <ProtectedRoutes><ProfilePage/></ProtectedRoutes>,
+        element: <ProtectedRoutes><ProfilePage /></ProtectedRoutes>,
       },
       {
         path: "play-with-bots",
@@ -59,7 +64,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "friends",
-        element: <ProtectedRoutes><Friends/></ProtectedRoutes>
+        element: <ProtectedRoutes><Friends /></ProtectedRoutes>
       },
       {
         path: "add-friends",
@@ -71,11 +76,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "profile",
-        element: <ProtectedRoutes><ProfilePage/></ProtectedRoutes>,
+        element: <ProtectedRoutes><ProfilePage /></ProtectedRoutes>,
       },
       {
         path: "notice",
-        element: <ProtectedRoutes><Notice/></ProtectedRoutes>,
+        element: <ProtectedRoutes><Notice /></ProtectedRoutes>,
       },
       {
         path: "logout",
@@ -83,6 +88,7 @@ export const router = createBrowserRouter([
       },
     ],
   },
+
   {
     path: "/forgot-password",
     element: <PublicRoutes><ForgotPassword /></PublicRoutes>,

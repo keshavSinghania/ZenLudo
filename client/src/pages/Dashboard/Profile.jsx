@@ -3,42 +3,12 @@ import diceBg from "../../assets/LudoBoard1.png";
 import defaultAvatar from "../../assets/default-avatar-zenludo.png";
 import axiosInstance from "../../api/axios";
 import { useNavigate } from "react-router-dom";
-
+import { useSelector } from "react-redux";
 const ProfilePage = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [userData, setUserData] = useState()
-    const [message, setMessage] = useState("");
-    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
-
-    //function to fetch user profile details
-    const fetchUserProfile = async () => {
-        setMessage("");
-        setLoading(true);
-        try {
-            const response = await axiosInstance.get("/auth/fetch-user-profile");
-            if (response?.data?.success) {
-                setUserData(response?.data?.data);
-                console.log(response?.data?.data);
-            } else {
-                setMessage(response?.data?.message);
-            }
-        } catch (error) {
-            if (error.code === "ERR_NETWORK") {
-                setMessage("Network error: Check your internet connection.");
-            } else if (error.response) {
-                setMessage(error.response.data?.message || "Server error occurred");
-            } else {
-                setMessage(error.message || "Unexpected error occurred");
-            }
-        } finally {
-            setLoading(false);
-        }
-    }
-    useEffect(() => {
-        fetchUserProfile()
-    }, [])
-//firstPlaceWins//gamesPlayed//gamesWon//name//profilePic//recentGames//username(data coming from db )
+    const userData = useSelector((state)=>state.auth)
+  //firstPlaceWins//gamesPlayed//gamesWon//name//profilePic//recentGames//username(data coming from db )
     return (
         <div className="relative w-full min-h-screen bg-gray-950 text-white overflow-hidden">
             {/* Background */}

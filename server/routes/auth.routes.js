@@ -13,12 +13,12 @@ authRouter.post('/check-username-availability', checkUsernameAvailability);
 authRouter.get("/fetch-user-profile",authVerifyMiddleware,fetchUserProfileController);
 
 
-authRouter.get("/verify-auth", authVerifyMiddleware, (req, res) => {
-    res.json({
-        message: "User is authenticated",
-        user: {
-            id: req.userId,
-            // email: req.user.email,
-        },
-    });
-});
+// authRouter.get("/verify-auth", authVerifyMiddleware, (req, res) => {
+//     res.json({
+//         message: "User is authenticated",
+//         user: {
+//             id: req.userId,
+//             // email: req.user.email,
+//         },
+//     });
+// });

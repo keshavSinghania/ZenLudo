@@ -1,5 +1,15 @@
 @import "tailwindcss";
 
+/* Hide scrollbar but keep scrolling */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+
 /* Floating Particles Animation */
 @keyframes float {
   0% {
@@ -214,4 +224,3 @@
 .dice-dots[data-value="6"] .dot:nth-child(6) {
   visibility: visible;
 }
-

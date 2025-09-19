@@ -335,9 +335,8 @@ export const fetchUserProfileController = async (req, res, next) => {
       return next(error);
     }
 
-    // Safer: whitelist fields you actually need
     const user = await User.findById(userId).select(
-      "name username profilePic gamesPlayed gamesWon firstPlaceWins recentGames createdAt updatedAt"
+      "_id friendIds name username profilePic gamesPlayed gamesWon firstPlaceWins recentGames createdAt updatedAt"
     );
 
     if (!user) {

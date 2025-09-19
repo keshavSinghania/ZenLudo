@@ -4,6 +4,7 @@ import { CiLogout } from "react-icons/ci";
 import LudoLoader from "../../Components/LudoLoader";
 import { useSelector } from "react-redux";
 import { IoIosWarning } from "react-icons/io";
+import { IoChatbubbleEllipses } from "react-icons/io5";
 function Dashboard() {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   if (!isLoggedIn) return <LudoLoader></LudoLoader>;
@@ -98,6 +99,7 @@ function Dashboard() {
             { name: "History", icon: "📜", path: "history" },
             { name: "Profile", icon: "👤", path: "profile" },
             { name: "Notice", icon: <IoIosWarning />, path: "notice" },
+            { name: "Chat", icon: <IoChatbubbleEllipses/>, path: "/chat" },
             { name: "Logout", icon: <CiLogout />, path: "logout" },
           ].map((item, index) => (
             <li key={index}>

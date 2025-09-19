@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { login, logout } from "./ReactRedux/authSlice.js";
+import { login, logout , updateProfileData} from "./ReactRedux/authSlice.js";
 import axiosInstance from "./api/axios.js"
 import LudoLoader from "./Components/LudoLoader.jsx";
 import NetworkError from "./Components/NetworkError.jsx";
@@ -23,18 +23,19 @@ const App = () => {
       }
 
       try {
-        const response = await axiosInstance.get("/auth/verify-auth", {
+        const response = await axiosInstance.get("/auth/fetch-user-profile", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        if (response.data?.user) {
+        if (response.data?.success) {
           dispatch(login({authToken: token }));
+          dispatch(updateProfileData(response?.data?.data))
         } else {
           dispatch(logout());
         }
       } catch (err) {
         if (!err.response) {
-          setNetworkError(true); // show network error
+          setNetworkError(true);
         } else {
           dispatch(logout());
         }
@@ -46,7 +47,6 @@ const App = () => {
     checkAuth();
   }, [dispatch]);
 
-  // ✅ All returns must be inside the component function
   if (loading) return <LudoLoader loadingMessage={"PLEASE WAIT..."} />;
   if (networkError) return <NetworkError retry={() => window.location.reload()} />;
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import diceBg from "../../assets/LudoBoard1.png";
 import defaultAvatar from "../../assets/default-avatar-zenludo.png";
 import axiosInstance from "../../api/axios";
+import { useSelector } from "react-redux";
 
 const AddFriends = () => {
     // Floating particles
@@ -31,6 +32,7 @@ const AddFriends = () => {
     const [friendInformation, setFriendInformation] = useState(null);
     const [errorMessage, setErrorMessage] = useState("");
     const [displayResult, setDisplayResult] = useState(false);
+    const  friendIds  = useSelector((state) => state.auth.friendIds);
 
     const handleSearch = async () => {
         try {
@@ -241,13 +243,25 @@ const AddFriends = () => {
                                     </div>
 
                                     <div className="mt-4 flex justify-end">
-                                        <button
-                                            disabled={sendFriendRequestLoading}
-                                            onClick={() => { sendFriendRequest(friendInformation._id) }}
-                                            className={`cursor-pointer px-5 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 ${sendFriendRequestLoading ? "from-cyan-300 to-blue-300" : ""}  rounded-full hover:scale-105 transition transform shadow-md font-semibold text-sm`}>
-                                            {sendFriendRequestLoading ? "Sending request..." : "Send request"}
-                                        </button>
+                                        {friendIds?.includes(friendInformation._id) ? (
+                                            <button
+                                                disabled
+                                                className="px-5 py-2 bg-gray-600 rounded-full shadow-md font-semibold text-sm cursor-not-allowed"
+                                            >
+                                                Already Friend
+                                            </button>
+                                        ) : (
+                                            <button
+                                                disabled={sendFriendRequestLoading}
+                                                onClick={() => sendFriendRequest(friendInformation._id)}
+                                                className={`cursor-pointer px-5 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 ${sendFriendRequestLoading ? "from-cyan-300 to-blue-300" : ""
+                                                    } rounded-full hover:scale-105 transition transform shadow-md font-semibold text-sm`}
+                                            >
+                                                {sendFriendRequestLoading ? "Sending request..." : "Send Request"}
+                                            </button>
+                                        )}
                                     </div>
+
                                 </div>
                             </div>
                         )}

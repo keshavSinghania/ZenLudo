@@ -4,6 +4,7 @@ import defaultAvatar from "../../assets/default-avatar-zenludo.png";
 import axiosInstance from "../../api/axios";
 import { useState } from "react";
 import { useEffect } from "react";
+import { useSelector } from "react-redux";
 
 const Friends = () => {
   
@@ -32,6 +33,7 @@ const Friends = () => {
   const [fetchFriendLoading , setFetchFriendLoading] = useState(false);
   const [notification, setNotification] = useState("");
   const [friends , setFriends] = useState([]);
+
 
   //function to fetch all the friends 
   useEffect(()=>{
