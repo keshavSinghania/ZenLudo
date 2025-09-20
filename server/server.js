@@ -5,6 +5,7 @@ import { errorMiddleware } from "./middlewares/errorMiddleware.js";
 import { authRouter } from "./routes/auth.routes.js";
 import cors from "cors"
 import { friendRouter } from "./routes/friend.routes.js";
+import { messageRouter } from "./routes/message.routes.js";
 dotenv.config();
 
 const PORT = process.env.PORT || 5000;
@@ -22,7 +23,8 @@ app.use(express.json());
 
  //auth routes
  app.use('/api/v1/auth', authRouter);
- app.use('/api/v1/friend', friendRouter)
+ app.use('/api/v1/friend', friendRouter);
+ app.use('/api/v1/message', messageRouter);
 
 // Connect to the database
 connectDB();

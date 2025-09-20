@@ -175,13 +175,13 @@ export const fetchFriendsController = async (req, res, next) => {
                     ]
                 })
                     .sort({ createdAt: -1 })
-                    .limit(10)
+                    .limit(1)
                     .select("sender text receiver createdAt")
                     .lean();
 
                 return {
                     ...friend,
-                    lastMessages: message.reverse(),
+                    lastMessage: message,
                 };
             })
         );

@@ -12,6 +12,11 @@ function Chat() {
   const [isLoading, setIsLoading] = useState(false);
   const [friends, setFriends] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
+  const [chatLoading, setChatLoading] = useState(false);
+  const [messages, setMessages] = useState([]);
+  const [limit, setLimit] = useState(10);
+  const [skip, setSkip] = useState(10);
+  const [chatLoadingError, setChatLoadingError] = useState("Loading your chat...")
   //function to fetch all the freinds details
   const fetchFriends = async () => {
     try {
@@ -19,13 +24,15 @@ function Chat() {
       const response = await axiosInstance.get("/friend/fetch-friends");
       const data = response?.data;
 
-      // firstPlaceWins,gamesPlayed,gamesWon,name,profilePic,recentGames,username,keshavks__,_id
+      // firstPlaceWins,gamesPlayed,gamesWon,name,profilePic,recentGames,username,_id , lastMessage
 
       console.log(data?.data)
       if (data?.success) {
+        //setting friends data into setFriends
         setFriends(data?.data);
+        console.log(data?.data);
       } else {
-        setErrorMessage(data?.message || "something went wring try again later")
+        setErrorMessage(data?.message || "something went wrong try again later")
       }
     } catch (error) {
       if (error.code === "ERR_NETWORK") {
@@ -41,28 +48,55 @@ function Chat() {
     }
   }
 
+  //function ot fetch conversation
+  const fetchConversation = async (friendId) => {
+    try {
+      setChatLoadingError("Loading your chat...");
+      setChatLoading(true)
+      const response = await axiosInstance.get(`/message/fetch-conversation/${friendId}`, {
+        params: { skip, limit }
+      });
+      const data = response?.data;
+      if (data?.success) {
+        console.log("message data:", data?.data);
+        setMessages(data?.data);
+        if(data?.data.length == 0){
+          setChatLoadingError("Say hii! to start conversation");
+        }
+      };
+    } catch (error) {
+      if (error.code === "ERR_NETWORK") {
+        setChatLoadingError("Network error: Check your internet connection.");
+      } else if (error.response) {
+        setChatLoadingError(error.response.data?.message || "Server error occurred");
+      } else {
+        setChatLoadingError(error.message || "Unexpected error occurred");
+      }
+    } finally {
+      setChatLoading(false)
+    }
+  }
+
   useEffect(() => {
     fetchFriends()
   }, [])
 
-  // const friends = [
-  //   { id: 1, name: "Meow1", lastMessage: "Hey! How are you?", avatar: defaultAvatar, status: "online" },
-  //   { id: 2, name: "Miss meow", lastMessage: "milk milk", avatar: defaultAvatar, status: "offline" },
-  //   { id: 3, name: "mr meow", lastMessage: "rat rat", avatar: defaultAvatar, status: "online" },
-  //   { id: 4, name: "bhagad billa", lastMessage: "khiii khiii", avatar: defaultAvatar, status: "away" },
-  //   { id: 5, name: "Billu don", lastMessage: "Dekh dekh dekh kaise khush ho rha", avatar: defaultAvatar, status: "online" },
-  //   { id: 6, name: "Keshav singhania", lastMessage: "Bye guyz", avatar: defaultAvatar, status: "offline" },
+  //function to open converation
+  const openConversation = async (friend) => {
+    setSelectedFriend(friend);
+    setActiveView("chat");
+    fetchConversation(friend?._id);
+  }
+  // const messages = [
+  //   { id: 1, sender: "me", text: "Hii dog!", time: "10:30 AM" },
+  //   { id: 2, sender: "friend", text: "gooooooooood night😄", time: "10:32 AM" },
+  //   { id: 3, sender: "me", text: "tin tin tin", time: "10:34 AM" },
+  //   { id: 4, sender: "friend", text: "lalalalalala", time: "10:35 AM" },
+  //   { id: 5, sender: "me", text: "bhaaaaag jaa", time: "10:36 AM" },
+  //   { id: 6, sender: "friend", text: "meow meow", time: "10:37 AM" },
+  //   { id: 7, sender: "me", text: "kyu bhaaaai hila dala n?", time: "10:38 AM" },
+  //   { id: 8, sender: "friend", text: "chaloo bye....", time: "10:39 AM" },
   // ];
-  const messages = [
-    { id: 1, sender: "me", text: "Hii dog!", time: "10:30 AM" },
-    { id: 2, sender: "friend", text: "gooooooooood night😄", time: "10:32 AM" },
-    { id: 3, sender: "me", text: "tin tin tin", time: "10:34 AM" },
-    { id: 4, sender: "friend", text: "lalalalalala", time: "10:35 AM" },
-    { id: 5, sender: "me", text: "bhaaaaag jaa", time: "10:36 AM" },
-    { id: 6, sender: "friend", text: "meow meow", time: "10:37 AM" },
-    { id: 7, sender: "me", text: "kyu bhaaaai hila dala n?", time: "10:38 AM" },
-    { id: 8, sender: "friend", text: "chaloo bye....", time: "10:39 AM" },
-  ];
 
   const [activeView, setActiveView] = useState("friends");
   const [searchTerm, setSearchTerm] = useState("");
@@ -148,12 +182,11 @@ function Chat() {
             {filteredFriends.length > 0 ? (
               filteredFriends.map((friend) => (
                 <div
-                  key={friend._id}
+                  key={friend?._id}
                   className={`flex items-center gap-4 p-3 mb-3 rounded-xl hover:bg-white/10 cursor-pointer transition-colors relative 
                                     ${selectedFriend && selectedFriend.id === friend._id ? 'bg-white/15' : ''}`}
                   onClick={() => {
-                    setSelectedFriend(friend);
-                    setActiveView("chat");
+                    openConversation(friend)
                   }}
                 >
                   <div className="relative">
@@ -173,7 +206,12 @@ function Chat() {
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-lg text-white truncate">{friend.username}</h3>
                     <p className="font-semibold text-sm text-white truncate">{friend.name}</p>
-                    <p className="text-sm text-gray-300 truncate">{friend.lastMessage}</p>
+                    <p className="text-sm text-gray-300 truncate">
+                      {friend?.lastMessages?.length > 0
+                        ? friend.lastMessages[friend.lastMessages.length - 1].text
+                        : "No message"}
+                    </p>
+
                   </div>
                 </div>
               ))
@@ -219,22 +257,33 @@ function Chat() {
 
               {/* Chat Messages */}
               <div className="flex-1 overflow-y-auto hide-scrollbar p-4 space-y-4 custom-scrollbar">
-                {messages.map((msg) => (
-                  <div
-                    key={msg.id}
-                    className={`flex ${msg.sender === "me" ? "justify-end" : "justify-start"}`}
-                  >
-                    <div
-                      className={`max-w-xs px-5 py-3 rounded-3xl text-sm shadow-md ${msg.sender === "me"
-                        ? "bg-gradient-to-br from-blue-600 to-cyan-500 text-white rounded-br-none"
-                        : "bg-white/20 text-white rounded-bl-none"
-                        }`}
-                    >
-                      <p>{msg.text}</p>
-                      <span className="block text-[10px] text-gray-300 mt-1 text-right">{msg.time}</span>
-                    </div>
-                  </div>
-                ))}
+                {
+                  chatLoading ? (<p className="flex items-center justify-center text-center p-5 text-gray-400">{chatLoadingError}</p>) 
+                  :
+                  (
+                    messages.length !== 0 ? (
+                    messages?.map((msg) => (
+                      <div
+                        key={msg.id}
+                        className={`flex ${msg.sender === "me" ? "justify-end" : "justify-start"}`}
+                      >
+                        <div
+                          className={`max-w-xs px-5 py-3 rounded-3xl text-sm shadow-md ${msg.sender === "me"
+                            ? "bg-gradient-to-br from-blue-600 to-cyan-500 text-white rounded-br-none"
+                            : "bg-white/20 text-white rounded-bl-none"
+                            }`}
+                        >
+                          <p>{msg.text}</p>
+                          <span className="block text-[10px] text-gray-300 mt-1 text-right">{msg.time}</span>
+                        </div>
+                      </div>
+                    ))
+                  ) :
+                    (
+                      <p className="flex items-center justify-center text-center p-5 text-gray-400">{chatLoadingError || "Send Hy to start conversation"}</p>
+                    )
+                  )
+                }
               </div>
 
               {/* Message Input */}
