@@ -106,16 +106,6 @@ function Chat() {
     setActiveView("chat");
     fetchConversation(friend?._id);
   }
-  // const messages = [
-  //   { id: 1, sender: "me", text: "Hii dog!", time: "10:30 AM" },
-  //   { id: 2, sender: "friend", text: "gooooooooood night😄", time: "10:32 AM" },
-  //   { id: 3, sender: "me", text: "tin tin tin", time: "10:34 AM" },
-  //   { id: 4, sender: "friend", text: "lalalalalala", time: "10:35 AM" },
-  //   { id: 5, sender: "me", text: "bhaaaaag jaa", time: "10:36 AM" },
-  //   { id: 6, sender: "friend", text: "meow meow", time: "10:37 AM" },
-  //   { id: 7, sender: "me", text: "kyu bhaaaai hila dala n?", time: "10:38 AM" },
-  //   { id: 8, sender: "friend", text: "chaloo bye....", time: "10:39 AM" },
-  // ];
 
   const [activeView, setActiveView] = useState("friends");
   const [searchTerm, setSearchTerm] = useState("");
@@ -293,7 +283,7 @@ function Chat() {
                             }`}
                         >
                           <p>{msg.text}</p>
-                          <span className="block text-[10px] text-gray-300 mt-1 text-right">{msg.time}</span>
+                          <span className="block text-[10px] text-gray-300 mt-1 text-right">{msg?.createdAt}</span>
                         </div>
                       </div>
                     ))
