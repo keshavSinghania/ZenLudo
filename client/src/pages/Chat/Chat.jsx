@@ -60,7 +60,7 @@ function Chat() {
       if (data?.success) {
         console.log("message data:", data?.data);
         setMessages(data?.data);
-        if(data?.data.length == 0){
+        if (data?.data.length == 0) {
           setChatLoadingError("Say hii! to start conversation");
         }
       };
@@ -78,21 +78,21 @@ function Chat() {
   }
 
   //fucntion to send message to user and saved to the database(calling send-message api)
-  const sendMessage = async (friendId,e) => {
+  const sendMessage = async (friendId, e) => {
     e.preventDefault();
     try {
       console.log("boom", friendId, text)
-      if(text.length == 0) return ;
+      if (text.length == 0) return;
       setText("");
-      const response = axiosInstance.post("/message/send-message",{receiverId:friendId, text});
+      const response = axiosInstance.post("/message/send-message", { receiverId: friendId, text });
       console.log(response)
-      if(response?.data?.success){
+      if (response?.data?.success) {
         const data = response?.data?.data;
         console.log(data);
-        console.log("gyaa",response?.data?.message);
+        console.log("gyaa", response?.data?.message);
       }
     } catch (error) {
-      
+
     }
   }
 
@@ -126,7 +126,7 @@ function Chat() {
     return (
       <div
         key={`particle-${i}`}
-        className="animate-float animate-color-shift absolute rounded-full z-10" 
+        className="animate-float animate-color-shift absolute rounded-full z-10"
         style={{
           width: `${size}px`,
           height: `${size}px`,
@@ -148,7 +148,7 @@ function Chat() {
 
       {/* Ludo Board Background (behind the chat UI) */}
       <div
-        className="absolute inset-0 w-full h-full bg-contain bg-no-repeat bg-center animate-pulse-glow neon-board z-20" 
+        className="absolute inset-0 w-full h-full bg-contain bg-no-repeat bg-center animate-pulse-glow neon-board z-20"
         style={{ backgroundImage: `url(${bgImage})` }}
       ></div>
 
@@ -267,52 +267,58 @@ function Chat() {
               {/* Chat Messages */}
               <div className="flex-1 overflow-y-auto hide-scrollbar p-4 space-y-4 custom-scrollbar">
                 {
-                  chatLoading ? (<p className="flex items-center justify-center text-center p-5 text-gray-400">{chatLoadingError}</p>) 
-                  :
-                  (
-                    messages.length !== 0 ? (
-                    messages?.map((msg) => (
-                      <div
-                        key={msg.id}
-                        className={`flex ${msg?.senderId !== selectedFriend?._id ? "justify-end" : "justify-start"}`}
-                      >
-                        <div
-                          className={`max-w-xs px-5 py-3 rounded-3xl text-sm shadow-md ${msg.senderId !== selectedFriend?._id
-                            ? "bg-gradient-to-br from-blue-600 to-cyan-500 text-white rounded-br-none"
-                            : "bg-white/20 text-white rounded-bl-none"
-                            }`}
-                        >
-                          <p>{msg.text}</p>
-                          <span className="block text-[10px] text-gray-300 mt-1 text-right">{msg?.createdAt}</span>
-                        </div>
-                      </div>
-                    ))
-                  ) :
+                  chatLoading ? (<p className="flex items-center justify-center text-center p-5 text-gray-400">{chatLoadingError}</p>)
+                    :
                     (
-                      <p className="flex items-center justify-center text-center p-5 text-gray-400">{chatLoadingError || "Send Hy to start conversation"}</p>
+                      messages.length !== 0 ? (
+                        messages?.map((msg) => (
+                          <div
+                            key={msg.id}
+                            className={`flex ${msg?.senderId !== selectedFriend?._id ? "justify-end" : "justify-start"}`}
+                          >
+                            <div
+                              className={`max-w-xs px-5 py-3 rounded-3xl text-sm shadow-md ${msg.senderId !== selectedFriend?._id
+                                ? "bg-gradient-to-br from-blue-600 to-cyan-500 text-white rounded-br-none"
+                                : "bg-white/20 text-white rounded-bl-none"
+                                }`}
+                            >
+                              <p>{msg.text}</p>
+                              <span className="block text-[10px] text-gray-300 mt-1 text-right">
+                                {new Date(msg?.createdAt).toLocaleTimeString([], {
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                  hour12: true
+                                })}
+                              </span>
+                            </div>
+                          </div>
+                        ))
+                      ) :
+                        (
+                          <p className="flex items-center justify-center text-center p-5 text-gray-400">{chatLoadingError || "Send Hy to start conversation"}</p>
+                        )
                     )
-                  )
                 }
               </div>
 
               {/* Message Input */}
-              <form onSubmit={(e)=>sendMessage(selectedFriend?._id,e)}>
+              <form onSubmit={(e) => sendMessage(selectedFriend?._id, e)}>
                 <div className="p-4 border-t border-white/10 flex items-center gap-3 bg-white/10 backdrop-blur-md rounded-b-lg shadow-lg">
-                <input
-                  type="text"
-                  placeholder="Type a message..."
-                  onChange={(e)=> setText(e.target.value)}
-                  value={text}
-                  className="flex-1 px-5 py-3 rounded-full bg-white/20 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-colors"
-                />
-                <button 
-                type="submit"
-                className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full hover:scale-105 transition-transform font-bold text-white shadow-lg"
-                onClick={()=> {sendMessage(selectedFriend._id)}}
-                >
-                  Send
-                </button>
-              </div>
+                  <input
+                    type="text"
+                    placeholder="Type a message..."
+                    onChange={(e) => setText(e.target.value)}
+                    value={text}
+                    className="flex-1 px-5 py-3 rounded-full bg-white/20 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-colors"
+                  />
+                  <button
+                    type="submit"
+                    className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full hover:scale-105 transition-transform font-bold text-white shadow-lg"
+                    onClick={() => { sendMessage(selectedFriend._id) }}
+                  >
+                    Send
+                  </button>
+                </div>
               </form>
             </>
           ) : (
