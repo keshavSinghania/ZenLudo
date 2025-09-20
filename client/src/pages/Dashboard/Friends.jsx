@@ -5,6 +5,7 @@ import axiosInstance from "../../api/axios";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const Friends = () => {
   
@@ -29,7 +30,7 @@ const Friends = () => {
       ></div>
     );
   });
-
+  const navigate = useNavigate();
   const [fetchFriendLoading , setFetchFriendLoading] = useState(false);
   const [notification, setNotification] = useState("");
   const [friends , setFriends] = useState([]);
@@ -116,7 +117,7 @@ const Friends = () => {
                 <div className="flex gap-3">
                   <button
                     className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full text-sm font-semibold hover:scale-105 transition transform shadow-md"
-                    onClick={() => alert(`Chat with ${friend.name}`)}
+                    onClick={() => navigate("/chat")}
                   >
                     Chat
                   </button>
@@ -124,7 +125,7 @@ const Friends = () => {
               </div>
             ))}
 
-            {friends.length === 0 && (
+            {friends?.length === 0 && (
               <p className="text-gray-400 text-center">No friends found.</p>
             )}
           </div>
