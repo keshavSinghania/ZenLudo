@@ -15,8 +15,9 @@ function Chat() {
   const [chatLoading, setChatLoading] = useState(false);
   const [messages, setMessages] = useState([]);
   const [limit, setLimit] = useState(10);
-  const [skip, setSkip] = useState(10);
+  const [skip, setSkip] = useState(0);
   const [chatLoadingError, setChatLoadingError] = useState("Loading your chat...")
+  const [text, setText] = useState("");
   //function to fetch all the freinds details
   const fetchFriends = async () => {
     try {
@@ -30,7 +31,6 @@ function Chat() {
       if (data?.success) {
         //setting friends data into setFriends
         setFriends(data?.data);
-        console.log(data?.data);
       } else {
         setErrorMessage(data?.message || "something went wrong try again later")
       }
@@ -77,6 +77,25 @@ function Chat() {
     }
   }
 
+  //fucntion to send message to user and saved to the database(calling send-message api)
+  const sendMessage = async (friendId,e) => {
+    e.preventDefault();
+    try {
+      console.log("boom", friendId, text)
+      if(text.length == 0) return ;
+      setText("");
+      const response = axiosInstance.post("/message/send-message",{receiverId:friendId, text});
+      console.log(response)
+      if(response?.data?.success){
+        const data = response?.data?.data;
+        console.log(data);
+        console.log("gyaa",response?.data?.message);
+      }
+    } catch (error) {
+      
+    }
+  }
+
   useEffect(() => {
     fetchFriends()
   }, [])
@@ -117,7 +136,7 @@ function Chat() {
     return (
       <div
         key={`particle-${i}`}
-        className="animate-float animate-color-shift absolute rounded-full z-10" // z-10 for particles
+        className="animate-float animate-color-shift absolute rounded-full z-10" 
         style={{
           width: `${size}px`,
           height: `${size}px`,
@@ -139,7 +158,7 @@ function Chat() {
 
       {/* Ludo Board Background (behind the chat UI) */}
       <div
-        className="absolute inset-0 w-full h-full bg-contain bg-no-repeat bg-center animate-pulse-glow neon-board z-20" // z-20 for Ludo board
+        className="absolute inset-0 w-full h-full bg-contain bg-no-repeat bg-center animate-pulse-glow neon-board z-20" 
         style={{ backgroundImage: `url(${bgImage})` }}
       ></div>
 
@@ -191,24 +210,24 @@ function Chat() {
                 >
                   <div className="relative">
                     <img
-                      src={friend.avatar || avatar}
-                      alt={friend.name}
+                      src={friend?.avatar || avatar}
+                      alt={friend?.name}
                       className="w-12 h-12 rounded-full border-2 border-purple-500 object-cover"
                     />
                     {/* Status indicator */}
                     <span className={`
                                 absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white/20 
-                                ${friend.status === "online" ? "bg-green-500" :
-                        friend.status === "offline" ? "bg-gray-500" :
+                                ${friend?.status === "online" ? "bg-green-500" :
+                        friend?.status === "offline" ? "bg-gray-500" :
                           "bg-yellow-500"}
                             `} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-lg text-white truncate">{friend.username}</h3>
-                    <p className="font-semibold text-sm text-white truncate">{friend.name}</p>
+                    <h3 className="font-semibold text-lg text-white truncate">{friend?.username}</h3>
+                    <p className="font-semibold text-sm text-white truncate">{friend?.name}</p>
                     <p className="text-sm text-gray-300 truncate">
-                      {friend?.lastMessages?.length > 0
-                        ? friend.lastMessages[friend.lastMessages.length - 1].text
+                      {friend?.lastMessage?.length > 0
+                        ? friend?.lastMessage[friend.lastMessage.length - 1].text
                         : "No message"}
                     </p>
 
@@ -247,10 +266,10 @@ function Chat() {
                   className="w-12 h-12 rounded-full border-2 border-purple-500 object-cover"
                 />
                 <div>
-                  <h2 className="text-xl font-bold text-white">{selectedFriend.name}</h2>
-                  <p className="text-sm font-bold text-gray-400">{selectedFriend.username}</p>
-                  <p className={`text-sm ${selectedFriend.status === 'online' ? 'text-green-400' : 'text-gray-400'}`}>
-                    {selectedFriend.status === 'online' ? 'Online' : selectedFriend.status === 'offline' ? 'Offline' : 'Away'}
+                  <h2 className="text-xl font-bold text-white">{selectedFriend?.name}</h2>
+                  <p className="text-sm font-bold text-gray-400">{selectedFriend?.username}</p>
+                  <p className={`text-sm ${selectedFriend?.status === 'online' ? 'text-green-400' : 'text-gray-400'}`}>
+                    {selectedFriend.status === 'online' ? 'Online' : selectedFriend?.status === 'offline' ? 'Offline' : 'Away'}
                   </p>
                 </div>
               </div>
@@ -265,10 +284,10 @@ function Chat() {
                     messages?.map((msg) => (
                       <div
                         key={msg.id}
-                        className={`flex ${msg.sender === "me" ? "justify-end" : "justify-start"}`}
+                        className={`flex ${msg?.senderId !== selectedFriend?._id ? "justify-end" : "justify-start"}`}
                       >
                         <div
-                          className={`max-w-xs px-5 py-3 rounded-3xl text-sm shadow-md ${msg.sender === "me"
+                          className={`max-w-xs px-5 py-3 rounded-3xl text-sm shadow-md ${msg.senderId !== selectedFriend?._id
                             ? "bg-gradient-to-br from-blue-600 to-cyan-500 text-white rounded-br-none"
                             : "bg-white/20 text-white rounded-bl-none"
                             }`}
@@ -287,16 +306,24 @@ function Chat() {
               </div>
 
               {/* Message Input */}
-              <div className="p-4 border-t border-white/10 flex items-center gap-3 bg-white/10 backdrop-blur-md rounded-b-lg shadow-lg">
+              <form onSubmit={(e)=>sendMessage(selectedFriend?._id,e)}>
+                <div className="p-4 border-t border-white/10 flex items-center gap-3 bg-white/10 backdrop-blur-md rounded-b-lg shadow-lg">
                 <input
                   type="text"
                   placeholder="Type a message..."
+                  onChange={(e)=> setText(e.target.value)}
+                  value={text}
                   className="flex-1 px-5 py-3 rounded-full bg-white/20 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-colors"
                 />
-                <button className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full hover:scale-105 transition-transform font-bold text-white shadow-lg">
+                <button 
+                type="submit"
+                className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full hover:scale-105 transition-transform font-bold text-white shadow-lg"
+                onClick={()=> {sendMessage(selectedFriend._id)}}
+                >
                   Send
                 </button>
               </div>
+              </form>
             </>
           ) : (
             <div className="flex items-center justify-center h-full text-gray-400 text-xl">

@@ -141,7 +141,7 @@ export const fetchFriendRequestsController = async (req, res, next) => {
     }
 };
 
-//Fetch Friends (with little bit information including first 10 chats)
+//Fetch Friends (with little bit information i.e last chats)
 export const fetchFriendsController = async (req, res, next) => {
     try {
         const userId = req.userId;
@@ -170,8 +170,8 @@ export const fetchFriendsController = async (req, res, next) => {
             user.friendIds.map(async (friend) => {
                 const message = await Message.find({
                     $or: [
-                        { sender: userId, receiver: friend._id },
-                        { sender: friend._id, receiver: userId }
+                        { senderId: userId, receiverId: friend._id },
+                        { senderId: friend._id, receiverId: userId }
                     ]
                 })
                     .sort({ createdAt: -1 })

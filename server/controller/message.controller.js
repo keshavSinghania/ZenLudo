@@ -22,10 +22,9 @@ export const sendMessageController = async (req, res, next) => {
             error.statusCode = 404;
             return next(error);
         }
-
         const savedMessage = await Message.create({
-            receiver: receiverId,
-            sender: userId,
+            receiverId: receiverId,
+            senderId: userId,
             text,
         });
 
@@ -59,7 +58,6 @@ export const fetchConversationController = async (req, res, next) => {
             error.statusCode = 400;
             return next(error);
         }
-
         const messages = await Message.find({
             $or: [
                 { senderId: userId, receiverId: friendId },
@@ -70,7 +68,10 @@ export const fetchConversationController = async (req, res, next) => {
         .skip(skip)
         .limit(limit)
         .lean();
-
+        
+        console.log("CHECK", messages)
+        console.log("s id", userId)
+        console.log("CHECK", friendId)
         if (!messages) {
             const error = new Error("Something went wrong while loading your chat");
             error.statusCode = 500;
