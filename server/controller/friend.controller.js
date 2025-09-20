@@ -1,3 +1,4 @@
+import Message from "../models/message.schema.js";
 import User from "../models/user.schema.js";
 
 // Search Friend
@@ -140,7 +141,7 @@ export const fetchFriendRequestsController = async (req, res, next) => {
     }
 };
 
-//Fetch Friends
+//Fetch Friends (with little bit information including first 10 chats)
 export const fetchFriendsController = async (req, res, next) => {
     try {
         const userId = req.userId;
@@ -153,23 +154,47 @@ export const fetchFriendsController = async (req, res, next) => {
 
         const user = await User.findById(userId)
             .select("-password -otp -email")
-            .populate(
-                "friendIds" ,
-                "profilePic username name profilePic gamesPlayed gamesWon firstPlaceWins recentGames"
-            );
+            .populate({
+                path: "friendIds",
+                select: "profilePic username name" 
+            })
+            .lean();
 
         if (!user) {
             const error = new Error("No such user found. Please register first");
             error.statusCode = 404;
             return next(error);
         }
+
+        const friendsMessages = await Promise.all(
+            user.friendIds.map(async (friend) => {
+                const message = await Message.find({
+                    $or: [
+                        { sender: userId, receiver: friend._id },
+                        { sender: friend._id, receiver: userId }
+                    ]
+                })
+                    .sort({ createdAt: -1 })
+                    .limit(10)
+                    .select("sender text receiver createdAt")
+                    .lean();
+
+                return {
+                    ...friend,
+                    lastMessages: message.reverse(),
+                };
+            })
+        );
+
         return res.status(200).json({
             message: "Successfully fetched all friends",
             success: true,
             error: false,
-            data: user.friendIds,
+            data: friendsMessages,
         });
-    } catch (error) {
+    } catch (err) {
+        const error = new Error(err.message || "Something went wrong");
+        error.statusCode = err.statusCode || 500;
         next(error);
     }
 };

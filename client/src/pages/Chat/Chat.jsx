@@ -1,22 +1,58 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import LudoLoader from "../../Components/LudoLoader"; 
+import LudoLoader from "../../Components/LudoLoader";
 import defaultAvatar from "../../assets/default-avatar-zenludo.png";
-import bgImage from "../../assets/LudoBoard1.png"; 
+import bgImage from "../../assets/LudoBoard1.png";
 import { FaSearch, FaArrowLeft } from "react-icons/fa";
+import axiosInstance from "../../api/axios";
+import avatar from "../../assets/default-avatar-zenludo.png"
 
-
-function PlayWithBots() {
+function Chat() {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const [isLoading, setIsLoading] = useState(false);
+  const [friends, setFriends] = useState([]);
+  const [errorMessage, setErrorMessage] = useState("");
+  //function to fetch all the freinds details
+  const fetchFriends = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axiosInstance.get("/friend/fetch-friends");
+      const data = response?.data;
 
-  const friends = [
-    { id: 1, name: "Meow1", lastMessage: "Hey! How are you?", avatar: defaultAvatar, status: "online" },
-    { id: 2, name: "Miss meow", lastMessage: "milk milk", avatar: defaultAvatar, status: "offline" },
-    { id: 3, name: "mr meow", lastMessage: "rat rat", avatar: defaultAvatar, status: "online" },
-    { id: 4, name: "bhagad billa", lastMessage: "khiii khiii", avatar: defaultAvatar, status: "away" },
-    { id: 5, name: "Billu don", lastMessage: "Dekh dekh dekh kaise khush ho rha", avatar: defaultAvatar, status: "online" },
-    { id: 6, name: "Keshav singhania", lastMessage: "Bye guyz", avatar: defaultAvatar, status: "offline" },
-  ];
+      // firstPlaceWins,gamesPlayed,gamesWon,name,profilePic,recentGames,username,keshavks__,_id
+
+      console.log(data?.data)
+      if (data?.success) {
+        setFriends(data?.data);
+      } else {
+        setErrorMessage(data?.message || "something went wring try again later")
+      }
+    } catch (error) {
+      if (error.code === "ERR_NETWORK") {
+        setErrorMessage("Network error: Check your internet connection.");
+      } else if (error.response) {
+        setErrorMessage(error.response.data?.message || "Server error occurred");
+      } else {
+        setErrorMessage(error.message || "Unexpected error occurred");
+      }
+    }
+    finally {
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchFriends()
+  }, [])
+
+  // const friends = [
+  //   { id: 1, name: "Meow1", lastMessage: "Hey! How are you?", avatar: defaultAvatar, status: "online" },
+  //   { id: 2, name: "Miss meow", lastMessage: "milk milk", avatar: defaultAvatar, status: "offline" },
+  //   { id: 3, name: "mr meow", lastMessage: "rat rat", avatar: defaultAvatar, status: "online" },
+  //   { id: 4, name: "bhagad billa", lastMessage: "khiii khiii", avatar: defaultAvatar, status: "away" },
+  //   { id: 5, name: "Billu don", lastMessage: "Dekh dekh dekh kaise khush ho rha", avatar: defaultAvatar, status: "online" },
+  //   { id: 6, name: "Keshav singhania", lastMessage: "Bye guyz", avatar: defaultAvatar, status: "offline" },
+  // ];
   const messages = [
     { id: 1, sender: "me", text: "Hii dog!", time: "10:30 AM" },
     { id: 2, sender: "friend", text: "gooooooooood night😄", time: "10:32 AM" },
@@ -36,7 +72,7 @@ function PlayWithBots() {
     friend.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  if (!isLoggedIn) return <LudoLoader loadingMessage="Loading your game..." />;
+  if (!isLoggedIn || isLoading) return <LudoLoader loadingMessage={`Loading your game... ${setErrorMessage}`} />;
 
   // Floating glowing particles
   const particles = Array.from({ length: 20 }, (_, i) => {
@@ -83,7 +119,7 @@ function PlayWithBots() {
             border-r border-white/10 
             bg-white/5 backdrop-blur-md 
             text-white 
-            ${activeView === 'friends' ? 'flex' : 'hidden'} 
+            // ${activeView === 'friends' ? 'flex' : 'hidden'} 
             md:flex 
             transition-all duration-300 ease-in-out
         `}>
@@ -106,41 +142,43 @@ function PlayWithBots() {
             />
           </div>
 
+          {/* LEFT PORTION */}
           <h3 className="text-lg font-bold mb-4 text-gray-300">Conversations</h3>
           <div className="flex-1 overflow-y-auto custom-scrollbar pr-2">
             {filteredFriends.length > 0 ? (
-                filteredFriends.map((friend) => (
-                    <div
-                        key={friend.id}
-                        className={`flex items-center gap-4 p-3 mb-3 rounded-xl hover:bg-white/10 cursor-pointer transition-colors relative 
-                                    ${selectedFriend && selectedFriend.id === friend.id ? 'bg-white/15' : ''}`}
-                        onClick={() => {
-                            setSelectedFriend(friend);
-                            setActiveView("chat");
-                        }}
-                    >
-                        <div className="relative">
-                            <img
-                                src={friend.avatar}
-                                alt={friend.name}
-                                className="w-12 h-12 rounded-full border-2 border-purple-500 object-cover"
-                            />
-                            {/* Status indicator */}
-                            <span className={`
+              filteredFriends.map((friend) => (
+                <div
+                  key={friend._id}
+                  className={`flex items-center gap-4 p-3 mb-3 rounded-xl hover:bg-white/10 cursor-pointer transition-colors relative 
+                                    ${selectedFriend && selectedFriend.id === friend._id ? 'bg-white/15' : ''}`}
+                  onClick={() => {
+                    setSelectedFriend(friend);
+                    setActiveView("chat");
+                  }}
+                >
+                  <div className="relative">
+                    <img
+                      src={friend.avatar || avatar}
+                      alt={friend.name}
+                      className="w-12 h-12 rounded-full border-2 border-purple-500 object-cover"
+                    />
+                    {/* Status indicator */}
+                    <span className={`
                                 absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white/20 
                                 ${friend.status === "online" ? "bg-green-500" :
-                                  friend.status === "offline" ? "bg-gray-500" :
-                                  "bg-yellow-500"}
-                            `}/>
-                        </div>
-                        <div className="flex-1 min-w-0">
-                            <h3 className="font-semibold text-lg text-white truncate">{friend.name}</h3>
-                            <p className="text-sm text-gray-300 truncate">{friend.lastMessage}</p>
-                        </div>
-                    </div>
-                ))
+                        friend.status === "offline" ? "bg-gray-500" :
+                          "bg-yellow-500"}
+                            `} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-lg text-white truncate">{friend.username}</h3>
+                    <p className="font-semibold text-sm text-white truncate">{friend.name}</p>
+                    <p className="text-sm text-gray-300 truncate">{friend.lastMessage}</p>
+                  </div>
+                </div>
+              ))
             ) : (
-                <p className="text-center text-gray-400 mt-10">No friends found.</p>
+              <p className="text-center text-gray-400 mt-10">No friends found.</p>
             )}
           </div>
         </div>
@@ -155,63 +193,71 @@ function PlayWithBots() {
             transition-all duration-300 ease-in-out
         `}>
           {/* Top Bar Friend Info */}
-          <div className="p-4 flex items-center gap-4 border-b border-white/10 bg-white/10 backdrop-blur-md rounded-t-lg shadow-lg">
-            {/* Mobile back button */}
-            <button
-              onClick={() => setActiveView("friends")}
-              className="md:hidden text-white text-xl p-2 rounded-full hover:bg-white/20 transition-colors"
-            >
-              <FaArrowLeft />
-            </button>
-            <img
-              src={selectedFriend ? selectedFriend.avatar : defaultAvatar}
-              alt={selectedFriend ? selectedFriend.name : "Selected Friend"}
-              className="w-12 h-12 rounded-full border-2 border-purple-500 object-cover"
-            />
-            <div>
-              <h2 className="text-xl font-bold text-white">{selectedFriend ? selectedFriend.name : "Select a friend"}</h2>
-              <p className={`text-sm ${selectedFriend && selectedFriend.status === 'online' ? 'text-green-400' : 'text-gray-400'}`}>
-                {selectedFriend ? (selectedFriend.status === 'online' ? 'Online' : selectedFriend.status === 'offline' ? 'Offline' : 'Away') : 'Offline'}
-              </p>
-            </div>
-          </div>
-
-          {/* Chat Messages */}
-          <div className="flex-1 overflow-y-auto hide-scrollbar p-4 space-y-4 custom-scrollbar">
-            {messages.map((msg) => (
-              <div
-                key={msg.id}
-                className={`flex ${msg.sender === "me" ? "justify-end" : "justify-start"}`}
-              >
-                <div
-                  className={`max-w-xs px-5 py-3 rounded-3xl text-sm shadow-md ${
-                    msg.sender === "me"
-                      ? "bg-gradient-to-br from-blue-600 to-cyan-500 text-white rounded-br-none"
-                      : "bg-white/20 text-white rounded-bl-none"
-                  }`}
+          {selectedFriend ? (
+            <>
+              <div className="p-4 flex items-center gap-4 border-b border-white/10 bg-white/10 backdrop-blur-md rounded-t-lg shadow-lg">
+                {/* Mobile back button */}
+                <button
+                  onClick={() => setActiveView("friends")}
+                  className="md:hidden text-white text-xl p-2 rounded-full hover:bg-white/20 transition-colors"
                 >
-                  <p>{msg.text}</p>
-                  <span className="block text-[10px] text-gray-300 mt-1 text-right">{msg.time}</span>
+                  <FaArrowLeft />
+                </button>
+                <img
+                  src={selectedFriend.avatar || avatar}
+                  alt={selectedFriend.name}
+                  className="w-12 h-12 rounded-full border-2 border-purple-500 object-cover"
+                />
+                <div>
+                  <h2 className="text-xl font-bold text-white">{selectedFriend.name}</h2>
+                  <p className="text-sm font-bold text-gray-400">{selectedFriend.username}</p>
+                  <p className={`text-sm ${selectedFriend.status === 'online' ? 'text-green-400' : 'text-gray-400'}`}>
+                    {selectedFriend.status === 'online' ? 'Online' : selectedFriend.status === 'offline' ? 'Offline' : 'Away'}
+                  </p>
                 </div>
               </div>
-            ))}
-          </div>
 
-          {/* Message Input */}
-          <div className="p-4 border-t border-white/10 flex items-center gap-3 bg-white/10 backdrop-blur-md rounded-b-lg shadow-lg">
-            <input
-              type="text"
-              placeholder="Type a message..."
-              className="flex-1 px-5 py-3 rounded-full bg-white/20 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-colors"
-            />
-            <button className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full hover:scale-105 transition-transform font-bold text-white shadow-lg">
-              Send
-            </button>
-          </div>
+              {/* Chat Messages */}
+              <div className="flex-1 overflow-y-auto hide-scrollbar p-4 space-y-4 custom-scrollbar">
+                {messages.map((msg) => (
+                  <div
+                    key={msg.id}
+                    className={`flex ${msg.sender === "me" ? "justify-end" : "justify-start"}`}
+                  >
+                    <div
+                      className={`max-w-xs px-5 py-3 rounded-3xl text-sm shadow-md ${msg.sender === "me"
+                        ? "bg-gradient-to-br from-blue-600 to-cyan-500 text-white rounded-br-none"
+                        : "bg-white/20 text-white rounded-bl-none"
+                        }`}
+                    >
+                      <p>{msg.text}</p>
+                      <span className="block text-[10px] text-gray-300 mt-1 text-right">{msg.time}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Message Input */}
+              <div className="p-4 border-t border-white/10 flex items-center gap-3 bg-white/10 backdrop-blur-md rounded-b-lg shadow-lg">
+                <input
+                  type="text"
+                  placeholder="Type a message..."
+                  className="flex-1 px-5 py-3 rounded-full bg-white/20 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-colors"
+                />
+                <button className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full hover:scale-105 transition-transform font-bold text-white shadow-lg">
+                  Send
+                </button>
+              </div>
+            </>
+          ) : (
+            <div className="flex items-center justify-center h-full text-gray-400 text-xl">
+              Please select a friend to chat
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 }
 
-export default PlayWithBots;
+export default Chat;
