@@ -156,7 +156,7 @@ export const fetchFriendsController = async (req, res, next) => {
             .select("-password -otp -email")
             .populate({
                 path: "friendIds",
-                select: "profilePic username name" 
+                select: "profilePic username name"
             })
             .lean();
 
@@ -339,3 +339,12 @@ export const removeFriendController = async (req, res, next) => {
     }
 };
 
+//fetch friend using user id (for socket io implementaion)
+export const getFriendsFromDB = async (userId) => {
+    const user = await User.findById(userId).select("friendIds");
+
+    if (!user || !user?.friendIds) {
+        return [];
+    }
+   return user.friendIds.map(id => id.toString());
+}

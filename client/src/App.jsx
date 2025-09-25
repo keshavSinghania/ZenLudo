@@ -6,6 +6,7 @@ import LudoLoader from "./Components/LudoLoader.jsx";
 import NetworkError from "./Components/NetworkError.jsx";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./routes/router.jsx";
+import { initSocket } from "./socketIO/socket.js";
 
 const App = () => {
   const [loading, setLoading] = useState(true);
@@ -30,6 +31,7 @@ const App = () => {
         if (response.data?.success) {
           dispatch(login({authToken: token }));
           dispatch(updateProfileData(response?.data?.data))
+          initSocket(response?.data?.data?._id , dispatch)
         } else {
           dispatch(logout());
         }
@@ -43,7 +45,6 @@ const App = () => {
         setLoading(false);
       }
     };
-
     checkAuth();
   }, [dispatch]);
 

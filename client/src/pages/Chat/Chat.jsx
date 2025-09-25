@@ -5,7 +5,6 @@ import defaultAvatar from "../../assets/default-avatar-zenludo.png";
 import bgImage from "../../assets/LudoBoard1.png";
 import { FaSearch, FaArrowLeft } from "react-icons/fa";
 import axiosInstance from "../../api/axios";
-import InfiniteScroll from "react-infinite-scroll-component";
 
 function Chat() {
     const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
@@ -22,7 +21,12 @@ function Chat() {
     const [activeView, setActiveView] = useState("friends");
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedFriend, setSelectedFriend] = useState(null);
-    const [hasMoreData, setHasMoreData] = useState(true);
+    const [newMessage , setNewMessage] = useState()
+
+    // from socket store
+    // NOTE: If onlineFriends is an array of IDs, we'll keep the check efficient.
+    const onlineFriends = useSelector((state) => state.socket.onlineFriends);
+
     const chatEndRef = useRef(null);
 
     // fetch friends
@@ -49,17 +53,20 @@ function Chat() {
         }
     };
 
-    // fetch conversation
+    // fetch conversation (Reverted to original logic, fetching only the initial batch)
     const fetchConversation = async (friendId, reset = false) => {
         try {
             setChatLoadingError("Loading your chat...");
             setChatLoading(true);
+
+            // NOTE: skip and limit are sent, but subsequent logic to update 'skip' is removed.
             const response = await axiosInstance.get(`/message/fetch-conversation/${friendId}`, {
-                params: { skip, limit },
+                params: { skip: 0, limit }, // Hardcoding skip=0 for initial load
             });
             const data = response?.data;
             if (data?.success) {
-                setMessages((prevMessages) => [...prevMessages, ...data?.data]);
+                // Assuming backend returns newest messages last, or you want to display them that way
+                setMessages(data?.data);
                 if (data?.data.length === 0 && reset) {
                     setChatLoadingError("Say hi! to start the conversation.");
                 }
@@ -81,10 +88,14 @@ function Chat() {
     const sendMessage = async (e) => {
         e.preventDefault();
         if (text.trim().length === 0 || !selectedFriend?._id) return;
+        if (!user || !user._id) {
+            setErrorMessage("Authentication error: Cannot send message without user ID.");
+            return;
+        }
         try {
             const newMessage = {
                 _id: `temp-${Date.now()}`,
-                senderId: user?._id,
+                senderId: user._id,
                 text,
                 createdAt: new Date().toISOString(),
             };
@@ -92,7 +103,7 @@ function Chat() {
             setText("");
 
             const response = await axiosInstance.post("/message/send-message", {
-                receiverId: selectedFriend?._id,
+                receiverId: selectedFriend._id,
                 text: newMessage.text,
             });
 
@@ -100,7 +111,7 @@ function Chat() {
             if (data?.success) {
                 setMessages((prevMessages) =>
                     prevMessages.map((msg) =>
-                        msg._id === newMessage._id ? { ...data?.data, senderId: user?._id } : msg
+                        msg._id === newMessage._id ? { ...data?.data, senderId: user._id } : msg
                     )
                 );
             } else {
@@ -115,8 +126,9 @@ function Chat() {
 
     //fetch older messages
     const fetchOlderMessages = () => {
-        console.log("check")
+        console.log("Custom fetchOlderMessages called. Implement your custom pagination logic here.");
     }
+
     useEffect(() => {
         fetchFriends();
     }, []);
@@ -137,9 +149,18 @@ function Chat() {
         fetchConversation(friend._id, true);
     };
 
-    const filteredFriends = friends.filter((friend) =>
+    const baseFilteredFriends = friends.filter((friend) =>
         friend.username.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+    const filteredFriends = baseFilteredFriends.map((friend) => {
+        const isOnline = onlineFriends.some(onlineId => onlineId === friend._id);
+
+        return {
+            ...friend,
+            status: isOnline ? "online" : "offline",
+        };
+    });
 
     if (!isLoggedIn) return null;
 
@@ -180,15 +201,15 @@ function Chat() {
                 {/* LEFT PORTION */}
                 <div
                     className={`
-            w-full md:w-1/4 lg:w-[25vw] xl:w-[20vw]
-            flex-col p-4
-            border-r border-white/10
-            bg-white/5 backdrop-blur-md
-            text-white
-            ${activeView === "friends" ? "flex" : "hidden"}
-            md:flex
-            transition-all duration-300 ease-in-out
-          `}
+                        w-full md:w-1/4 lg:w-[25vw] xl:w-[20vw]
+                        flex-col p-4
+                        border-r border-white/10
+                        bg-white/5 backdrop-blur-md
+                        text-white
+                        ${activeView === "friends" ? "flex" : "hidden"}
+                        md:flex
+                        transition-all duration-300 ease-in-out
+                    `}
                 >
                     <div className="flex items-center gap-3 mb-6">
                         <h2 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400">
@@ -254,17 +275,19 @@ function Chat() {
                 {/* RIGHT PORTION */}
                 <div
                     className={`
-            w-full flex-col md:w-3/4 lg:w-[75vw] xl:w-[80vw]
-            flex-grow
-            text-white
-            ${activeView === "chat" ? "flex" : "hidden"}
-            md:flex
-            transition-all duration-300 ease-in-out
-          `}
+                        w-full flex-col md:w-3/4 lg:w-[75vw] xl:w-[80vw]
+                        flex-grow
+                        text-white
+                        ${activeView === "chat" ? "flex" : "hidden"}
+                        md:flex
+                        transition-all duration-300 ease-in-out
+                        h-full 
+                    `}
                 >
                     {selectedFriend ? (
                         <>
-                            <div className="p-4 flex items-center gap-4 border-b border-white/10 bg-white/10 backdrop-blur-md rounded-t-lg shadow-lg">
+                            {/* Chat Header */}
+                            <div className="p-4 flex items-center gap-4 border-b border-white/10 bg-white/10 backdrop-blur-md shadow-lg flex-shrink-0">
                                 <button
                                     onClick={() => setActiveView("friends")}
                                     className="md:hidden text-white text-xl p-2 rounded-full hover:bg-white/20 transition-colors"
@@ -289,17 +312,12 @@ function Chat() {
                                 </div>
                             </div>
 
-                            <div id="" className="flex-1 p-4 custom-scrollbar">
-                                <InfiniteScroll
-                                    dataLength={messages.length}
-                                    next={fetchOlderMessages}
-                                    inverse={true}
-                                    hasMore={hasMoreData}
-                                    loader={<h4 className="text-center">aur msssgg dikha de</h4>}
-                                    height="100%"  
-                                    
-                                    style={{ display: "flex", flexDirection: "column-reverse" }}
-                                >
+                            {/* Message Area */}
+                            <div
+                                id="scrollableChatDiv"
+                                className="flex-1 p-4 overflow-y-auto hide-scrollbar"
+                            >
+                                <div className="flex flex-col justify-end min-h-full">
                                     {chatLoading ? (
                                         <p className="flex items-center justify-center text-center p-5 text-gray-400">
                                             {chatLoadingError}
@@ -308,7 +326,7 @@ function Chat() {
                                         messages.map((msg) => (
                                             <div
                                                 key={msg._id}
-                                                className={`flex ${msg?.senderId !== selectedFriend?._id ? "justify-end" : "justify-start"}`}
+                                                className={`flex mt-4 ${msg?.senderId !== selectedFriend?._id ? "justify-end" : "justify-start"}`}
                                             >
                                                 <div
                                                     className={`max-w-xs px-5 py-3 rounded-3xl text-sm shadow-md ${msg.senderId !== selectedFriend?._id
@@ -329,17 +347,17 @@ function Chat() {
                                         ))
                                     ) : (
                                         <p className="flex items-center justify-center text-center p-5 text-gray-400">
-                                            {chatLoadingError || "Send hi to start a conversation."}
+                                            {chatLoadingError || "Send hi! to start a conversation."}
                                         </p>
                                     )}
 
                                     <div ref={chatEndRef} />
-                                </InfiniteScroll>
-
+                                </div>
                             </div>
 
 
-                            <form onSubmit={sendMessage}>
+                            {/*Send message [Frontend] */}
+                            <form onSubmit={sendMessage} className="flex-shrink-0">
                                 <div className="p-4 border-t border-white/10 flex items-center gap-3 bg-white/10 backdrop-blur-md rounded-b-lg shadow-lg">
                                     <input
                                         type="text"

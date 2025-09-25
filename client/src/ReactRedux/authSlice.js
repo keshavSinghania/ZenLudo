@@ -5,6 +5,7 @@ export const authSlice = createSlice({
   initialState: {
     isLoggedIn: null,
     authToken: "",
+    _id: "",
     name: "",
     username: "",
     profilePic: "",
