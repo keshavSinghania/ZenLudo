@@ -1,48 +1,18 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const sendOtpMail = async (to, otp) => {
-
-  console.log("========== OTP MAIL DEBUG START ==========");
-
-  console.log("EMAIL_USER:", process.env.EMAIL_USER);
-  console.log("EMAIL_PASS exists:", !!process.env.EMAIL_PASS);
-  console.log("EMAIL_PASS length:", process.env.EMAIL_PASS?.length);
-  console.log("Recipient:", to);
-  console.log("OTP:", otp);
-
   try {
-
-    console.log("Step 1: Creating transporter...");
-
-    const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 587,
-  secure: false,
-  connectionTimeout: 10000,
-  greetingTimeout: 10000,
-  socketTimeout: 10000,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
-
-    console.log("Step 2: Transporter created");
-
-    console.log("Step 3: Verifying SMTP connection...");
-
-    await transporter.verify();
-
-    console.log("Step 4: SMTP connection successful");
-
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: 'ZenLudo <onboarding@resend.dev>',
       to,
-      subject: 'ZenLudo Login OTP', 
+      subject: 'ZenLudo Login OTP',
       html: `
         <div style="background-color: #0d0d21; padding: 20px; color: #e0e0e0; font-family: 'Arial', sans-serif; text-align: center;">
           <div style="background: rgba(23, 23, 46, 0.7); max-width: 600px; margin: auto; padding: 30px; border-radius: 16px; border: 1px solid #4a236f; box-shadow: 0 0 15px rgba(128, 0, 128, 0.5);">
-            <h2 style="font-size: 28px; font-weight: bold; text-align: center; margin-bottom: 20px; background: linear-gradient(90deg, #f06, #a85, #0ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 8px #f06, 0 0 10px #0ff;">
+            
+            <h2 style="font-size: 28px; font-weight: bold; text-align: center; margin-bottom: 20px; background: linear-gradient(90deg, #f06, #a85, #0ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
               ZenLudo
             </h2>
 
@@ -58,7 +28,7 @@ const sendOtpMail = async (to, otp) => {
               Use the following One-Time Password (OTP) to complete the process.
             </p>
             
-            <div style="font-size: 32px; font-weight: bold; color: #0ff; text-align: center; margin: 40px 0; padding: 20px; background: #1f1f3e; border-radius: 10px; border: 1px solid #0ff; box-shadow: 0 0 10px #0ff; letter-spacing: 5px;">
+            <div style="font-size: 32px; font-weight: bold; color: #0ff; text-align: center; margin: 40px 0; padding: 20px; background: #1f1f3e; border-radius: 10px; border: 1px solid #0ff; letter-spacing: 5px;">
               ${otp}
             </div>
             
@@ -81,32 +51,22 @@ const sendOtpMail = async (to, otp) => {
       `,
     };
 
-    console.log("Step 5: Mail options created");
-    console.log("From:", mailOptions.from);
-    console.log("To:", mailOptions.to);
-    console.log("Subject:", mailOptions.subject);
+    console.log(`Sending OTP email to ${to}...`);
 
-    console.log("Step 6: Sending email...");
+    const { data, error } = await resend.emails.send(mailOptions);
 
-    const info = await transporter.sendMail(mailOptions);
+    if (error) {
+      console.error('Resend error:', error);
+      throw new Error('Failed to send OTP email');
+    }
 
-    console.log("Step 7: Email sent successfully");
-    console.log("Message ID:", info.messageId);
-    console.log("Response:", info.response);
-
-    console.log("========== OTP MAIL DEBUG END ==========");
+    console.log(`OTP email sent to ${to}`);
+    console.log('Resend message ID:', data.id);
 
     return true;
 
   } catch (error) {
-
-    console.error("========== OTP MAIL ERROR ==========");
-    console.error("Error message:", error.message);
-    console.error("Error code:", error.code);
-    console.error("Error command:", error.command);
-    console.error("Full error:", error);
-    console.error("====================================");
-
+    console.error(`Failed to send OTP email to ${to}:`, error.message);
     throw new Error('Failed to send OTP email');
   }
 };
