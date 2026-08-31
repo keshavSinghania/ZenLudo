@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
-
 const sendOtpMail = async (to, otp) => {
+  console.log("password: ", process.env.EMAIL_PASS);
   try {
     const transporter = nodemailer.createTransport({
       service: 'Gmail',
