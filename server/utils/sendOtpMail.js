@@ -15,12 +15,14 @@ const sendOtpMail = async (to, otp) => {
     console.log("Step 1: Creating transporter...");
 
     const transporter = nodemailer.createTransport({
-      service: 'Gmail',
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
+  host: 'smtp.gmail.com',
+  port: 587,
+  secure: false,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
 
     console.log("Step 2: Transporter created");
 
